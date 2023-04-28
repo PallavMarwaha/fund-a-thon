@@ -12,7 +12,7 @@ def fundraiser_directory_path(instance, filename):
     """
     Called by FileField to get the photos path
     """
-    return f"fundraiser_{instance.name}/{filename}"
+    return f"fundraisers/fundraiser_{instance.uuid}/{filename}"
 
 
 class Fundraiser(models.Model):
@@ -27,8 +27,14 @@ class Fundraiser(models.Model):
     amount_raised = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    is_deleted = models.BooleanField(default=False)
-    is_published = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name="Is the fundraiser deleted by the user?",
+        help_text="Used for soft delete",
+    )
+    is_published = models.BooleanField(
+        default=False, help_text="Whether it's published or in draft."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
