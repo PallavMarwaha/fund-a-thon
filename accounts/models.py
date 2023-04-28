@@ -81,3 +81,24 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         Sends an email to this User.
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class College(models.Model):
+    name = models.CharField(max_length=120)
+    city = models.CharField(max_length=120)
+    state = models.CharField(max_length=120)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("college")
+        verbose_name_plural = _("colleges")
+
+    def __str__(self) -> str:
+        return f"{self.name}, {self.city}"
+
+    def get_name_and_city(self):
+        """
+        Returns the college name and city.
+        """
+        return f"{self.name}, {self.city}"
