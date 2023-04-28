@@ -58,7 +58,7 @@ class Donation(models.Model):
 
 class FundraiserLike(models.Model):
     fundraiser = models.ForeignKey(Fundraiser, on_delete=models.RESTRICT)
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)  # Who paid the donation
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
     liked_at = models.DateTimeField(auto_now_add=True)
     has_liked = models.BooleanField(
         default=False, help_text="Used for toggle like/unlike"
@@ -71,3 +71,19 @@ class FundraiserLike(models.Model):
 
     def __str__(self) -> str:
         return f"{self.fundraiser.name} - {self.user.get_full_name()}"
+
+
+class FundraiserComment(models.Model):
+    fundraiser = models.ForeignKey(Fundraiser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(help_text="User's comment on the fundraiser")
+    commented_at = models.DateTimeField()
+    is_deleted = models.BooleanField(default=False, help_text="Used for soft delete")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        verbose_name = "FundraiserComment"
+
+    def __str__(self) -> str:
+        return f'F:{self.fundraiser.name} - "{self.text[:10]}" by {self.user.get_full_name()}'
