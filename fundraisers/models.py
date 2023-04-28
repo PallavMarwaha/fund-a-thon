@@ -40,3 +40,14 @@ class Fundraiser(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} by {self.user.get_full_name()}"
+
+
+class Donation(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)  # Who paid the donation
+    fundraiser = models.ForeignKey(Fundraiser, on_delete=models.RESTRICT)
+    amount_paid = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
+    paid_at = models.DateTimeField(auto_now_add=True)
+    payment_info = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
