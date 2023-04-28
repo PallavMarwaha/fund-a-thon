@@ -54,3 +54,17 @@ class Donation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.fundraiser} - {self.user.get_full_name()} - {self.amount_paid}"
+
+
+class FundraiserLike(models.Model):
+    fundraiser = models.ForeignKey(Fundraiser, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)  # Who paid the donation
+    liked_at = models.DateTimeField(auto_now_add=True)
+    has_liked = models.BooleanField(
+        default=False, help_text="Used for toggle like/unlike"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.fundraiser.name} - {self.user.get_full_name()}"
