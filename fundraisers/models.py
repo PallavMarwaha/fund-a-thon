@@ -66,5 +66,8 @@ class FundraiserLike(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
+    class Meta:
+        verbose_name = "FundraiserLike"
+
     def __str__(self) -> str:
         return f"{self.fundraiser.name} - {self.user.get_full_name()}"
