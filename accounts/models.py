@@ -33,6 +33,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=30, blank=True)
     email = models.EmailField(_("email address"), unique=True)
+    college = models.ForeignKey("College", on_delete=models.RESTRICT, null=True)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
@@ -87,6 +88,7 @@ class College(models.Model):
     name = models.CharField(max_length=120)
     city = models.CharField(max_length=120)
     state = models.CharField(max_length=120)
+    is_deleted = models.BooleanField(default=False)  # For soft delete
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
