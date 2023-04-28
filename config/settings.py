@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # Created apps
     "accounts",
+    "fundraisers",
 ]
 
 MIDDLEWARE = [
