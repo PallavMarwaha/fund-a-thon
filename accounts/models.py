@@ -67,6 +67,24 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         # To save usernames in lowercase in the DB
         self.email = self.__class__.objects.normalize_email(self.email)
         self.username = self.username.lower()
+        self.first_name = self.first_name.capitalize()
+        self.last_name = self.last_name.capitalize()
+
+    def save(self, *args, **kwargs):
+        created = self.id is None
+        super().save(*args, **kwargs)
+
+        # Create corresponding Student model object
+        if created and self.is_student:
+            try:
+                Student.objects.get(user=self)
+            except Student.DoesNotExist:
+                Student.objects.create(user=self)
+        elif (not created) and self.is_student:
+            try:
+                Student.objects.get(user=self)
+            except Student.DoesNotExist:
+                Student.objects.create(user=self)
 
     def get_full_name(self):
         """
@@ -88,7 +106,13 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    college = models.ForeignKey("College", on_delete=models.RESTRICT)
+    college = models.ForeignKey("College", on_delete=models.RESTRICT, null=True)
+
+    def __str__(self) -> str:
+        if self.college is None:
+            return f"{self.user.get_full_name()}"
+        else:
+            return f"{self.user.get_full_name()} - {self.college.name}"
 
 
 class College(models.Model):
