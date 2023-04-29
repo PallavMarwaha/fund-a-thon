@@ -33,7 +33,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=30, blank=True)
     email = models.EmailField(_("email address"), unique=True)
-    college = models.ForeignKey("College", on_delete=models.RESTRICT, null=True)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
@@ -46,6 +45,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
             "Designates whether this user should be treated as "
             "active. Unselect this instead of deleting accounts."
         ),
+    )
+    is_student = models.BooleanField(
+        default=False, help_text="Whether the user is a student or not."
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
@@ -82,6 +84,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         Sends an email to this User.
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Student(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    college = models.ForeignKey("College", on_delete=models.RESTRICT)
 
 
 class College(models.Model):
