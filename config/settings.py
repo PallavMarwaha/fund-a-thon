@@ -44,8 +44,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third party apps
     "rest_framework",
+    "djmoney",
     # Created apps
     "accounts",
+    "fundraisers",
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,5 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+MEDIA_ROOT = BASE_DIR / "media/"

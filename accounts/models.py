@@ -46,6 +46,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
             "active. Unselect this instead of deleting accounts."
         ),
     )
+    is_student = models.BooleanField(
+        default=False, help_text="Whether the user is a student or not."
+    )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     objects = CustomUserManager()
@@ -64,6 +67,24 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         # To save usernames in lowercase in the DB
         self.email = self.__class__.objects.normalize_email(self.email)
         self.username = self.username.lower()
+        self.first_name = self.first_name.capitalize()
+        self.last_name = self.last_name.capitalize()
+
+    def save(self, *args, **kwargs):
+        created = self.id is None
+        super().save(*args, **kwargs)
+
+        # Create corresponding Student model object
+        if created and self.is_student:
+            try:
+                Student.objects.get(user=self)
+            except Student.DoesNotExist:
+                Student.objects.create(user=self)
+        elif (not created) and self.is_student:
+            try:
+                Student.objects.get(user=self)
+            except Student.DoesNotExist:
+                Student.objects.create(user=self)
 
     def get_full_name(self):
         """
@@ -81,3 +102,36 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         Sends an email to this User.
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Student(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    college = models.ForeignKey("College", on_delete=models.RESTRICT, null=True)
+
+    def __str__(self) -> str:
+        if self.college is None:
+            return f"{self.user.get_full_name()}"
+        else:
+            return f"{self.user.get_full_name()} - {self.college.name}"
+
+
+class College(models.Model):
+    name = models.CharField(max_length=120)
+    city = models.CharField(max_length=120)
+    state = models.CharField(max_length=120)
+    is_deleted = models.BooleanField(default=False)  # For soft delete
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("college")
+        verbose_name_plural = _("colleges")
+
+    def __str__(self) -> str:
+        return f"{self.name}, {self.city}"
+
+    def get_name_and_city(self):
+        """
+        Returns the college name and city.
+        """
+        return f"{self.name}, {self.city}"
