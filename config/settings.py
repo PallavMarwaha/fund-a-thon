@@ -66,7 +66,7 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "LOGIN_SERIALIZER": "dj_rest_auth.serializers.LoginSerializer",
-    "TOKEN_SERIALIZER": "dj_rest_auth.serializers.TokenSerializer",
+    "TOKEN_SERIALIZER": "accounts.serializers.CustomTokenSerializer",
     "JWT_SERIALIZER": "dj_rest_auth.serializers.JWTSerializer",
     "JWT_SERIALIZER_WITH_EXPIRATION": "dj_rest_auth.serializers.JWTSerializerWithExpiration",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
