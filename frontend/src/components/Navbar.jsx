@@ -1,9 +1,10 @@
-import { useIsAuthenticated, useAuthUser } from "react-auth-kit";
+import { useIsAuthenticated, useAuthUser, useSignOut } from "react-auth-kit";
 import { Link } from "react-router-dom";
 
 export function Navbar() {
     const userAuthDetails = useAuthUser();
     const isAuthenticated = useIsAuthenticated();
+    const signOut = useSignOut();
 
     return (
         <nav className="w-full py-4 bg-blue-800 shadow">
@@ -25,7 +26,7 @@ export function Navbar() {
 
                 {/* NOT Authenticated */}
                 {!isAuthenticated() && (
-                    <div className="flex items-center text-lg !no-underline !text-white pr-6">
+                    <div className="flex items-center font-bold !no-underline !text-white pr-6">
                         <Link to={"/login"} className="p-2 rounded-md hover:bg-blue-600">
                             Login
                         </Link>
@@ -39,6 +40,14 @@ export function Navbar() {
                 {isAuthenticated() && (
                     <div className="flex items-center font-bold !no-underline !text-white pr-6">
                         <span>Hello, {userAuthDetails().first_name}</span>
+                        <a
+                            className="ml-8 p-2 rounded-md hover:bg-blue-600"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                signOut();
+                            }}>
+                            Sign Out
+                        </a>
                     </div>
                 )}
             </div>
