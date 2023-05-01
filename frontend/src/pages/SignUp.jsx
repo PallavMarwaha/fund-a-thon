@@ -1,6 +1,51 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Select from "react-select";
+
+const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+];
 
 export function SignUp() {
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+        college: {},
+        password1: "",
+        password2: "",
+        isStudent: true,
+    });
+
+    useEffect(() => {
+        if (!formData.isStudent) {
+            setFormData((prevState) => {
+                return {
+                    ...prevState,
+                    college: {},
+                };
+            });
+        }
+    }, [formData.isStudent]);
+
+    const updateFormData = (event) => {
+        setFormData((prevState) => {
+            return {
+                ...prevState,
+                [event.target.name]: event.target.type === "checkbox" ? event.target.checked : event.target.value,
+            };
+        });
+    };
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+
+        console.log(formData);
+    };
+
     return (
         <div className="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
             <div className="container max-w-screen-lg mx-auto">
@@ -16,120 +61,133 @@ export function SignUp() {
                             </div>
 
                             <div className="lg:col-span-2">
-                                <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                    <div className="md:col-span-5 md:flex justify-between">
-                                        <div>
-                                            <label htmlFor="full_name">First Name</label>
-                                            <input
-                                                type="text"
-                                                name="full_name"
-                                                id="full_name"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                value=""
-                                            />
+                                <form onSubmit={onSubmit}>
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                                        <div className="md:col-span-5 md:flex justify-between">
+                                            <div>
+                                                <label htmlFor="firstName">First Name</label>
+                                                <input
+                                                    type="text"
+                                                    name="firstName"
+                                                    id="firstName"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.firstName}
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="">
+                                                <label htmlFor="lastName">Last Name</label>
+                                                <input
+                                                    type="text"
+                                                    name="lastName"
+                                                    id="lastName"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.lastName}
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="">
-                                            <label htmlFor="full_name">Last Name</label>
-                                            <input
-                                                type="text"
-                                                name="full_name"
-                                                id="full_name"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                value=""
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="md:col-span-5 md:flex justify-between">
-                                        <div>
-                                            <label htmlFor="email">Email Address</label>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                id="email"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                value=""
-                                                placeholder="email@domain.com"
-                                            />
+                                        <div className="md:col-span-5 md:flex justify-between">
+                                            <div>
+                                                <label htmlFor="email">Email Address</label>
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    id="email"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.email}
+                                                    placeholder="email@domain.com"
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="md:col-span-5">
+                                                <label htmlFor="username">Username</label>
+                                                <input
+                                                    type="text"
+                                                    name="username"
+                                                    id="username"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.username}
+                                                    placeholder="email@123"
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
                                         </div>
                                         <div className="md:col-span-5">
-                                            <label htmlFor="username">Username</label>
-                                            <input
-                                                type="text"
-                                                name="username"
-                                                id="username"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                value=""
-                                                placeholder="email@domain.com"
-                                            />
+                                            <div>
+                                                <label htmlFor="password1">Password</label>
+                                                <input
+                                                    type="password1"
+                                                    name="password1"
+                                                    id="password1"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.password1}
+                                                    placeholder="**********"
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="mt-2 md:col-span-5">
+                                                <label htmlFor="password2">Confirm Password</label>
+                                                <input
+                                                    type="password"
+                                                    name="password2"
+                                                    id="password2"
+                                                    className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                                    value={formData.password2}
+                                                    placeholder="**********"
+                                                    onChange={updateFormData}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 md:col-span-5">
+                                            <div className="inline-flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    name="isStudent"
+                                                    id="isStudent"
+                                                    className="form-checkbox"
+                                                    onChange={updateFormData}
+                                                    defaultChecked={formData.isStudent}
+                                                />
+                                                <label htmlFor="isStudent" className="ml-2">
+                                                    I'm a student
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {formData.isStudent && (
+                                            <div className="md:col-span-2">
+                                                <label htmlFor="country">College/University</label>
+                                                <Select
+                                                    options={options}
+                                                    className="mt-2"
+                                                    required={formData.isStudent ? true : false}
+                                                    onChange={(choice) =>
+                                                        setFormData((prevState) => {
+                                                            return {
+                                                                ...prevState,
+                                                                college: choice,
+                                                            };
+                                                        })
+                                                    }
+                                                    name="college"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="md:col-span-5 text-right">
+                                            <div className="inline-flex items-end">
+                                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                                    Submit
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div className="md:col-span-2">
-                                        <label htmlFor="country">College/University</label>
-                                        <div className="h-10 bg-gray-50 flex border border-gray-200 rounded items-center mt-1">
-                                            <input
-                                                name="country"
-                                                id="country"
-                                                placeholder="Country"
-                                                className="px-4 appearance-none outline-none text-gray-800 w-full bg-transparent"
-                                                value=""
-                                            />
-                                            <button
-                                                tabIndex="-1"
-                                                className="cursor-pointer outline-none focus:outline-none transition-all text-gray-300 hover:text-red-600">
-                                                <svg
-                                                    className="w-4 h-4 mx-2 fill-current"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                            <button
-                                                tabIndex="-1"
-                                                htmlFor="show_more"
-                                                className="cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-blue-600">
-                                                <svg
-                                                    className="w-4 h-4 mx-2 fill-current"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round">
-                                                    <polyline points="18 15 12 9 6 15"></polyline>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="md:col-span-5">
-                                        <div className="inline-flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                name="billing_same"
-                                                id="billing_same"
-                                                className="form-checkbox"
-                                            />
-                                            <label htmlFor="billing_same" className="ml-2">
-                                                I'm a student
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div className="md:col-span-5 text-right">
-                                        <div className="inline-flex items-end">
-                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                                Submit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
