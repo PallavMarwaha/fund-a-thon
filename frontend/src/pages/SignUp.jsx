@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const options = [
     { value: "chocolate", label: "Chocolate" },
@@ -10,26 +12,59 @@ const options = [
 
 export function SignUp() {
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         email: "",
         username: "",
-        college: {},
-        password1: "",
+        college_id: "",
+        password: "",
         password2: "",
-        isStudent: true,
+        is_student: true,
     });
 
+    const [collegesList, setCollegesList] = useState([]);
+
     useEffect(() => {
-        if (!formData.isStudent) {
+        const fetchCollegesList = async () => {
+            const apiUrl = "/accounts/colleges/";
+
+            try {
+                const response = await axios.get(apiUrl);
+                if (response.status !== 200) {
+                    throw new Error();
+                }
+                const data = response.data;
+
+                if (data) {
+                    const modifiedCollegesList = data.map((college) => {
+                        return {
+                            value: college.id,
+                            label: college.full_name,
+                        };
+                    });
+                    setCollegesList([...modifiedCollegesList]);
+                } else {
+                    throw new Error();
+                }
+            } catch (error) {
+                toast.error("Something went wrong with fetching the colleges list.");
+            }
+        };
+
+        fetchCollegesList();
+    }, []);
+
+    // To reset college if not a student
+    useEffect(() => {
+        if (!formData.is_student) {
             setFormData((prevState) => {
                 return {
                     ...prevState,
-                    college: {},
+                    college_id: "",
                 };
             });
         }
-    }, [formData.isStudent]);
+    }, [formData.is_student]);
 
     const updateFormData = (event) => {
         setFormData((prevState) => {
@@ -40,10 +75,38 @@ export function SignUp() {
         });
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(formData);
+        // Password validation
+        if (formData.password !== formData.password2) {
+            toast.warn("Your passwords do not match!", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            return;
+        }
+
+        try {
+            const apiUrl = "/accounts/register/";
+            let response = await axios.post(apiUrl, formData);
+
+            toast.success("You've signed up successfully!", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        } catch (error) {
+            if (error.response.status === 422) {
+                const { data } = error.response;
+
+                // data is an object with error name as keys and list of errors as values
+                for (const key in data) {
+                    data[key].map((error) => {
+                        toast.error(error, {
+                            position: toast.POSITION.TOP_RIGHT,
+                        });
+                    });
+                }
+            }
+        }
     };
 
     return (
@@ -51,7 +114,6 @@ export function SignUp() {
             <div className="container max-w-screen-lg mx-auto">
                 <div>
                     <h2 className="font-semibold text-2xl text-gray-600 mb-4">Sign-Up Form</h2>
-                    {/* <p className="text-gray-500 mb-6">Form is mobile responsive. Give it a try.</p> */}
 
                     <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
                         <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
@@ -65,25 +127,25 @@ export function SignUp() {
                                     <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
                                         <div className="md:col-span-5 md:flex justify-between">
                                             <div>
-                                                <label htmlFor="firstName">First Name</label>
+                                                <label htmlFor="first_name">First Name</label>
                                                 <input
                                                     type="text"
-                                                    name="firstName"
-                                                    id="firstName"
+                                                    name="first_name"
+                                                    id="first_name"
                                                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                    value={formData.firstName}
+                                                    value={formData.first_name}
                                                     onChange={updateFormData}
                                                     required
                                                 />
                                             </div>
                                             <div className="">
-                                                <label htmlFor="lastName">Last Name</label>
+                                                <label htmlFor="last_name">Last Name</label>
                                                 <input
                                                     type="text"
-                                                    name="lastName"
-                                                    id="lastName"
+                                                    name="last_name"
+                                                    id="last_name"
                                                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                    value={formData.lastName}
+                                                    value={formData.last_name}
                                                     onChange={updateFormData}
                                                     required
                                                 />
@@ -119,13 +181,13 @@ export function SignUp() {
                                         </div>
                                         <div className="md:col-span-5">
                                             <div>
-                                                <label htmlFor="password1">Password</label>
+                                                <label htmlFor="password">Password</label>
                                                 <input
-                                                    type="password1"
-                                                    name="password1"
-                                                    id="password1"
+                                                    type="password"
+                                                    name="password"
+                                                    id="password"
                                                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                                                    value={formData.password1}
+                                                    value={formData.password}
                                                     placeholder="**********"
                                                     onChange={updateFormData}
                                                     required
@@ -149,29 +211,29 @@ export function SignUp() {
                                             <div className="inline-flex items-center">
                                                 <input
                                                     type="checkbox"
-                                                    name="isStudent"
-                                                    id="isStudent"
+                                                    name="is_student"
+                                                    id="is_student"
                                                     className="form-checkbox"
                                                     onChange={updateFormData}
-                                                    defaultChecked={formData.isStudent}
+                                                    defaultChecked={formData.is_student}
                                                 />
-                                                <label htmlFor="isStudent" className="ml-2">
+                                                <label htmlFor="is_student" className="ml-2">
                                                     I'm a student
                                                 </label>
                                             </div>
                                         </div>
-                                        {formData.isStudent && (
+                                        {formData.is_student && (
                                             <div className="md:col-span-2">
-                                                <label htmlFor="country">College/University</label>
+                                                <label htmlFor="college">College/University</label>
                                                 <Select
-                                                    options={options}
+                                                    options={collegesList}
                                                     className="mt-2"
-                                                    required={formData.isStudent ? true : false}
+                                                    required={formData.is_student ? true : false}
                                                     onChange={(choice) =>
                                                         setFormData((prevState) => {
                                                             return {
                                                                 ...prevState,
-                                                                college: choice,
+                                                                college_id: choice?.value,
                                                             };
                                                         })
                                                     }

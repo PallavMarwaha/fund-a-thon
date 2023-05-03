@@ -16,7 +16,8 @@
     "react-auth-kit": "^2.12.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.0",
-    "react-select": "^5.7.2"
+    "react-select": "^5.7.2",
+    "react-toastify": "^9.1.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

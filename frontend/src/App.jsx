@@ -7,13 +7,18 @@ import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
+import { ToastContainer } from "react-toastify";
 import axios from "axios";
+
+import "react-toastify/dist/ReactToastify.css";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 
 function App() {
     return (
         <>
+            {/* // Needs to be initialized once */}
+            <ToastContainer />
             <AuthProvider
                 authType={"cookie"}
                 authName={"_auth"}
