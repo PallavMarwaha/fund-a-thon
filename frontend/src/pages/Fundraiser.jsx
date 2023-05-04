@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
 
-export default function Fundraiser() {
+export function Fundraiser() {
     return <Outlet />;
 }
