@@ -8,15 +8,14 @@ export function PostDetail() {
                     </a>
                     <div className="bg-white flex flex-col justify-start p-6">
                         <a href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
-                            Technology
+                            4th May, 2023 - 10th May, 2023
                         </a>
                         <a href="#" className="text-3xl font-bold hover:text-gray-700 pb-4">
                             Lorem Ipsum Dolor Sit Amet Dolor Sit Amet
                         </a>
                         <p href="#" className="text-sm pb-8">
-                            By
                             <a href="#" className="font-semibold hover:text-gray-800">
-                                David Grzyb
+                                - David Grzyb
                             </a>
                             , Published on April 25th, 2020
                         </p>
@@ -71,6 +70,20 @@ export function PostDetail() {
                             tortor hendrerit, posuere diam. Proin laoreet, ligula non eleifend bibendum, orci nulla
                             luctus ipsum, dignissim convallis quam dolor et nulla.
                         </p>
+                        <hr className="m-4" />
+
+                        {/* <h1 className="text-2xl font-bold pb-3">Fundraiser info</h1> */}
+                        <div className="">
+                            <progress id="js-progressbar" className="uk-progress" value="10" max="100"></progress>
+                            <div className="flex justify-between">
+                                <p className="pb-3">Rs.600</p>
+                                <p className="pb-3">Rs.10000</p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="pb-3 uk-text-meta">(Funds raised)</p>
+                                <p className="pb-3 uk-text-meta">(Funds required)</p>
+                            </div>
+                        </div>
                     </div>
                 </article>
 
