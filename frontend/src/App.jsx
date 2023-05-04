@@ -5,6 +5,7 @@ import { AuthProvider } from "react-auth-kit";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
+import { PostDetail } from "./pages/PostDetail";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -35,6 +36,7 @@ function App() {
                             // </AuthNotRequired>
                         }></Route>
                     <Route path="/signup" element={<SignUp />}></Route>
+                    <Route path="/detail" element={<PostDetail />}></Route>
                 </Routes>
             </AuthProvider>
         </>
