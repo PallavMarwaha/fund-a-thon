@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-
-const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-];
+import { useIsAuthenticated } from "react-auth-kit";
 
 export function SignUp() {
     const [formData, setFormData] = useState({
@@ -23,6 +18,16 @@ export function SignUp() {
     });
 
     const [collegesList, setCollegesList] = useState([]);
+
+    const navigate = useNavigate();
+    const isAuthenticated = useIsAuthenticated();
+
+    // Prevent logged in user from signing up.
+    useEffect(() => {
+        if (isAuthenticated() === true) {
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
 
     useEffect(() => {
         const fetchCollegesList = async () => {
@@ -66,6 +71,11 @@ export function SignUp() {
         }
     }, [formData.is_student]);
 
+    // Avoids split second flickering
+    if (isAuthenticated()) {
+        return null;
+    }
+
     const updateFormData = (event) => {
         setFormData((prevState) => {
             return {
@@ -93,9 +103,12 @@ export function SignUp() {
             const apiUrl = "/accounts/register/";
             let response = await axios.post(apiUrl, formData);
 
+            // Success
             toast.success("You've signed up successfully!", {
                 position: toast.POSITION.TOP_RIGHT,
             });
+
+            navigate("/login");
         } catch (error) {
             if (error.response.status === 422) {
                 const { data } = error.response;
@@ -110,7 +123,7 @@ export function SignUp() {
                 }
             } else {
                 toast.error("Something went wrong. Please try again later.", {
-                    position: TransformStream.POSITION.TOP_RIGHT,
+                    position: toast.POSITION.TOP_RIGHT,
                 });
             }
         }
