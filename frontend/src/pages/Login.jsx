@@ -1,6 +1,52 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, redirect } from "react-router-dom";
+import { useSignIn, useIsAuthenticated } from "react-auth-kit";
+import axios from "axios";
+import { useEffect, useState, useLayoutEffect } from "react";
 
 export function Login() {
+    const signIn = useSignIn();
+    const isAuthenticated = useIsAuthenticated();
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({ username: "", password: "" });
+
+    // Prevent logged in user from accessing this page.
+    useEffect(() => {
+        if (isAuthenticated() === true) {
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
+
+    // Avoids split second flickering
+    if (isAuthenticated()) {
+        return null;
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .post("/accounts/login/", formData)
+            .then((res) => {
+                if (res.status) {
+                    if (
+                        signIn({
+                            token: res.data.key,
+                            expiresIn: 3600,
+                            tokenType: "Token",
+                            authState: res.data.user,
+                        })
+                    ) {
+                        console.log("Success");
+                    }
+                } else {
+                    throw new Error(res.data);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     return (
         <section className="bg-gray-100 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto sm:h-screen lg:py-0">
@@ -9,20 +55,28 @@ export function Login() {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Log into your account
                         </h1>
-                        <form className="space-y-4 md:space-y-6" action="#">
+                        <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
                             <div>
                                 <label
-                                    htmlFor="email"
+                                    htmlFor="username"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Your email
+                                    Your username
                                 </label>
                                 <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
+                                    type="text"
+                                    name="username"
+                                    id="username"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="name@company.com"
+                                    placeholder="username@123"
                                     required=""
+                                    onChange={(e) =>
+                                        setFormData((prevState) => {
+                                            return {
+                                                ...prevState,
+                                                username: e.target.value,
+                                            };
+                                        })
+                                    }
                                 />
                             </div>
                             <div>
@@ -38,6 +92,14 @@ export function Login() {
                                     placeholder="••••••••"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required=""
+                                    onChange={(e) =>
+                                        setFormData((prevState) => {
+                                            return {
+                                                ...prevState,
+                                                password: e.target.value,
+                                            };
+                                        })
+                                    }
                                 />
                             </div>
                             <div className="flex items-center justify-between">

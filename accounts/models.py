@@ -28,11 +28,19 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         validators=[username_validator],
         error_messages={
             "unique": _("A user with that username already exists."),
+            "required": _("Give yourself a username."),
         },
     )
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=30, blank=True)
-    email = models.EmailField(_("email address"), unique=True)
+    email = models.EmailField(
+        _("email address"),
+        unique=True,
+        error_messages={
+            "unique": _("A user with that email already exists."),
+            "required": _("Give yourself an email."),
+        },
+    )
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
