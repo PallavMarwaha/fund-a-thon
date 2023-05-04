@@ -1,3 +1,4 @@
+import { routes } from "./routes";
 import { Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { AuthProvider } from "react-auth-kit";
@@ -5,6 +6,9 @@ import { AuthProvider } from "react-auth-kit";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
+import { PostDetail } from "./pages/PostDetail";
+import { User } from "./pages/User";
+import { Fundraiser } from "./pages/Fundraiser";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -27,14 +31,19 @@ function App() {
                 <Navbar />
                 <Routes>
                     <Route path="/" element={<Home />}></Route>
-                    <Route
-                        path="/login"
-                        element={
-                            // <AuthNotRequired>
-                            <Login />
-                            // </AuthNotRequired>
-                        }></Route>
-                    <Route path="/signup" element={<SignUp />}></Route>
+                    <Route path="account" element={<User />}>
+                        <Route
+                            path={routes.account.login}
+                            element={
+                                // <AuthNotRequired>
+                                <Login />
+                                // </AuthNotRequired>
+                            }></Route>
+                        <Route path={routes.account.signup} element={<SignUp />}></Route>
+                    </Route>
+                    <Route path="fundraisers" element={<Fundraiser />}>
+                        <Route path={":fundraiserSlug"} element={<PostDetail />} />
+                    </Route>
                 </Routes>
             </AuthProvider>
         </>

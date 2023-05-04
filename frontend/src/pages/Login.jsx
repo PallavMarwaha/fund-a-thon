@@ -1,3 +1,4 @@
+import { routes } from "../routes";
 import { Link, useNavigate, redirect } from "react-router-dom";
 import { useSignIn, useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
@@ -13,7 +14,7 @@ export function Login() {
     // Prevent logged in user from accessing this page.
     useEffect(() => {
         if (isAuthenticated() === true) {
-            navigate("/");
+            navigate(routes.home);
         }
     }, [isAuthenticated, navigate]);
 

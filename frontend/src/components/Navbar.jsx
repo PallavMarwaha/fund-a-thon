@@ -1,3 +1,4 @@
+import { routes } from "../routes";
 import { useIsAuthenticated, useAuthUser, useSignOut } from "react-auth-kit";
 import { Link } from "react-router-dom";
 
@@ -12,7 +13,7 @@ export function Navbar() {
                 <nav>
                     <ul className="flex items-center justify-between font-bold text-sm text-white uppercase no-underline">
                         <li>
-                            <Link className="hover:text-gray-200 hover:underline px-4" to={"/"}>
+                            <Link className="hover:text-gray-200 hover:underline px-4" to={routes.home}>
                                 Home
                             </Link>
                         </li>
@@ -27,10 +28,10 @@ export function Navbar() {
                 {/* NOT Authenticated */}
                 {!isAuthenticated() && (
                     <div className="flex items-center font-bold !no-underline !text-white pr-6">
-                        <Link to={"/login"} className="p-2 rounded-md hover:bg-blue-600">
+                        <Link to={routes.account.login} className="p-2 rounded-md hover:bg-blue-600">
                             Login
                         </Link>
-                        <Link to="/signup" className="ml-2 p-2 rounded-md hover:bg-blue-600">
+                        <Link to={routes.account.signup} className="ml-2 p-2 rounded-md hover:bg-blue-600">
                             Sign Up
                         </Link>
                     </div>
