@@ -75,6 +75,9 @@ export function SignUp() {
         });
     };
 
+    /**
+     * Submits user form details for registration
+     */
     const onSubmit = async (e) => {
         e.preventDefault();
 
@@ -105,6 +108,10 @@ export function SignUp() {
                         });
                     });
                 }
+            } else {
+                toast.error("Something went wrong. Please try again later.", {
+                    position: TransformStream.POSITION.TOP_RIGHT,
+                });
             }
         }
     };
