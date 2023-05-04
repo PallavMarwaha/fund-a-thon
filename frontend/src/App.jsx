@@ -8,6 +8,7 @@ import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
 import { PostDetail } from "./pages/PostDetail";
 import { User } from "./pages/User";
+import { Fundraiser } from "./pages/Fundraiser";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -40,7 +41,9 @@ function App() {
                             }></Route>
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
                     </Route>
-                    <Route path="/detail" element={<PostDetail />}></Route>
+                    <Route path="fundraisers" element={<Fundraiser />}>
+                        <Route path={":fundraiserSlug"} element={<PostDetail />} />
+                    </Route>
                 </Routes>
             </AuthProvider>
         </>
