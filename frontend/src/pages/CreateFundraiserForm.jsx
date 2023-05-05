@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { routes } from "../routes";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Cookie from "js-cookie";
 
 const INITIAL_DATA = {
     name: "",
@@ -85,7 +86,9 @@ export function CreateFundraiserForm() {
             const response = await axios.post(apiUrl, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    Authorization: `Token ${Cookie.get("_auth")}`,
                 },
+                withCredentials: true,
             });
         } catch (error) {
             console.log(error);
