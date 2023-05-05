@@ -1,83 +1,100 @@
+import { useEffect, useState } from "react";
+import { routes } from "../routes";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import { Loader } from "../components/Loader";
+
 export function FundraiserDetail() {
+    const [fundraiserDetails, setFundraiserDetails] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    const startDate = dayjs(fundraiserDetails?.start_date).format("DD MMMM, YYYY");
+    const endDate = dayjs(fundraiserDetails?.end_date).format("DD MMMM, YYYY");
+    const createdAt = dayjs(fundraiserDetails.created_at).format("DD MMMM, YYYY");
+    const fundraiserProgess =
+        (parseInt(fundraiserDetails.amount_raised) / parseInt(fundraiserDetails.amount_required)) * 100;
+
+    const routeParams = useParams();
+
+    // To check if the fundraiser exists on page load
+    useEffect(() => {
+        const getFundraiserDetails = async () => {
+            try {
+                const { fundraiserSlug } = routeParams;
+                const apiUrl = `${routes.fundraisers.base}/${fundraiserSlug}/`;
+
+                const response = await axios.get(apiUrl);
+
+                setFundraiserDetails(response.data);
+
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 1000);
+            } catch (error) {
+                // TODO: Redirect to homepage on error
+                const { response } = error;
+                setIsLoading(false);
+                if (response?.status === 404) {
+                    toast.error("Could not find the fundraiser. Please try again.");
+                } else {
+                    toast.error("Something went wrong. Please try again later.");
+                }
+
+                navigate(routes.home);
+            }
+        };
+
+        getFundraiserDetails();
+    }, [routeParams]);
+
+    if (isLoading) {
+        return <Loader />;
+    }
+
     return (
         <div className="md:container mx-auto flex flex-wrap py-6">
             <section className="w-full md:w-2/3 flex flex-col items-center px-3 mx-auto">
                 <article className="flex flex-col shadow my-4">
                     <a href="#" className="hover:opacity-75">
-                        <img src="https://source.unsplash.com/collection/1346951/1000x500?sig=1" />
+                        <img
+                            src="https://source.unsplash.com/collection/1346951/1000x500?sig=1"
+                            width={1000}
+                            height={500}
+                        />
                     </a>
                     <div className="bg-white flex flex-col justify-start p-6">
-                        <a href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
-                            4th May, 2023 - 10th May, 2023
-                        </a>
-                        <a href="#" className="text-3xl font-bold hover:text-gray-700 pb-4">
-                            Lorem Ipsum Dolor Sit Amet Dolor Sit Amet
+                        <p href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
+                            {startDate} - {endDate}
+                        </p>
+                        <a href="#" className="text-3xl uppercase font-bold hover:text-gray-700 pb-4">
+                            {fundraiserDetails.name}
                         </a>
                         <p href="#" className="text-sm pb-8">
-                            <a href="#" className="font-semibold hover:text-gray-800">
-                                - David Grzyb
+                            <a href="#" className="font-semibold uppercase hover:text-gray-800">
+                                - {`${fundraiserDetails.user.first_name} ${fundraiserDetails.user.last_name}`}
                             </a>
-                            , Published on April 25th, 2020
+                            , Published on {createdAt}
                         </p>
                         <h1 className="text-2xl font-bold pb-3">Introduction</h1>
-                        <p className="pb-3">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel neque non libero
-                            suscipit suscipit eu eu urna. Proin bibendum urna mattis ante malesuada ultrices. Etiam in
-                            turpis vitae elit dictum aliquet. Donec mattis risus in turpis dapibus, eget tempus sem
-                            tincidunt. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-                            mus. In est enim, imperdiet sed ornare quis, pellentesque vel risus. Nunc vitae vestibulum
-                            turpis. Quisque eget eleifend urna. Etiam et vulputate purus, ut egestas sem. Vestibulum
-                            ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis quis neque
-                            non urna venenatis mollis et at massa. Pellentesque sem lacus, malesuada vel hendrerit
-                            molestie, mollis vel elit.
-                        </p>
-                        <h1 className="text-2xl font-bold pb-3">Heading</h1>
-                        <p className="pb-3">
-                            Vivamus nec facilisis elit, quis congue justo. In non augue ex. Aenean pretium facilisis
-                            hendrerit. Sed sed imperdiet dui. Etiam faucibus a diam sed vehicula. Nullam commodo lacus
-                            tincidunt, tincidunt orci sed, dapibus leo. Vivamus vulputate quis risus a ultricies.
-                            Aliquam luctus id tellus non condimentum. Aenean maximus viverra ipsum eget vestibulum.
-                            Morbi ut tincidunt sem, efficitur volutpat tortor. Donec scelerisque, ipsum eu efficitur
-                            semper, neque turpis sodales quam, in aliquam elit lacus varius lorem. Ut ut diam id leo
-                            efficitur malesuada eget in velit. Pellentesque tristique orci nunc, vitae fermentum nibh
-                            luctus eu. Mauris condimentum justo sed ipsum egestas varius.
-                        </p>
-                        <p className="pb-3">
-                            Sed sagittis odio a volutpat feugiat. Cras aliquam varius justo, a rhoncus ante bibendum id.
-                            Nulla maximus nisl sed enim maximus, ut dictum lectus hendrerit. Fusce venenatis tincidunt
-                            eros. Phasellus quis augue vulputate ipsum pellentesque fringilla. Morbi nec tempor felis.
-                            Maecenas sollicitudin pellentesque dui, sit amet scelerisque mauris elementum nec. Cras ante
-                            metus, mattis in malesuada in, fermentum a nunc. Suspendisse potenti. Sed tempor lacus sed
-                            commodo dignissim. Quisque dictum, dolor auctor iaculis cursus, ipsum urna porttitor ex, sed
-                            consequat nisi tellus eget ante. Duis molestie mollis eros, eu sollicitudin mauris lobortis
-                            quis.
-                        </p>
-                        <p className="pb-3">
-                            Vivamus sed neque nec massa scelerisque imperdiet eget id sapien. Fusce elementum mi id
-                            malesuada luctus. Proin quis lorem id leo porta interdum non ac nisl. Integer nulla sem,
-                            ultrices sed neque eget, blandit condimentum metus. Aliquam eget malesuada sapien. Curabitur
-                            aliquet orci sit amet ex tincidunt convallis. Mauris urna mi, consequat mattis mollis a,
-                            dignissim eget sem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-                            cubilia Curae; Nam facilisis sem diam, viverra consequat metus consequat vel. Cras a mi eu
-                            ex luctus malesuada quis eu ante. Aliquam erat volutpat.
-                        </p>
-                        <h1 className="text-2xl font-bold pb-3">Conclusion</h1>
-                        <p className="pb-3">
-                            Donec vulputate auctor leo lobortis congue. Sed elementum pharetra turpis. Nulla at
-                            condimentum odio. Vestibulum ullamcorper enim eget porttitor bibendum. Proin eros nibh,
-                            maximus vitae nisi a, blandit ultricies lectus. Vivamus eu maximus lacus. Maecenas imperdiet
-                            iaculis neque, vitae efficitur felis vestibulum sagittis. Nunc a eros aliquet, egestas
-                            tortor hendrerit, posuere diam. Proin laoreet, ligula non eleifend bibendum, orci nulla
-                            luctus ipsum, dignissim convallis quam dolor et nulla.
-                        </p>
+                        <p className="pb-3">{fundraiserDetails.about}</p>
+                        <h1 className="text-2xl font-bold pb-3">Details</h1>
+                        <p className="pb-3">{fundraiserDetails.details} </p>
+
                         <hr className="m-4" />
 
-                        {/* <h1 className="text-2xl font-bold pb-3">Fundraiser info</h1> */}
                         <div className="">
-                            <progress id="js-progressbar" className="uk-progress" value="10" max="100"></progress>
+                            <progress
+                                id="js-progressbar"
+                                className="uk-progress"
+                                value={fundraiserProgess}
+                                max={100}></progress>
                             <div className="flex justify-between">
-                                <p className="pb-3">Rs.600</p>
-                                <p className="pb-3">Rs.10000</p>
+                                <p className="pb-3">Rs.{fundraiserDetails.amount_raised}</p>
+                                <p className="pb-3">Rs.{fundraiserDetails.amount_required}</p>
                             </div>
                             <div className="flex justify-between">
                                 <p className="pb-3 uk-text-meta">(Funds raised)</p>
