@@ -16,8 +16,11 @@ import { ToastContainer } from "react-toastify";
 import axios from "axios";
 
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
 
 axios.defaults.baseURL = `http://localhost:8000`;
+// For Token authentication
+axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
 
 function App() {
     //https://github.com/react-auth-kit/react-auth-kit/issues/1023

@@ -86,7 +86,6 @@ export function CreateFundraiserForm() {
             const response = await axios.post(apiUrl, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Token ${Cookie.get("_auth")}`,
                 },
                 withCredentials: true,
             });
