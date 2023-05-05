@@ -30,4 +30,5 @@ def create_fundraiser(request):
         serializer.save()
         return Response({"detail": "Fundraiser created successfully."})
     else:
-        return Response(serializer.errors)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

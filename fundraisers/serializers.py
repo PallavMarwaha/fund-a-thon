@@ -29,6 +29,32 @@ class CreateFundraiserSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
         ]
+        extra_kwargs = {
+            "name": {
+                "error_messages": {
+                    "invalid": "Fundraiser name is invalid",
+                    "blank": "Fundraiser name is required",
+                }
+            },
+            "about": {
+                "error_messages": {
+                    "invalid": "Fundraiser about is invalid",
+                    "blank": "Fundraiser about is required",
+                }
+            },
+            "details": {
+                "error_messages": {
+                    "invalid": "Fundraiser details are invalid",
+                    "blank": "Fundraiser details are required",
+                }
+            },
+            "amount_required": {
+                "error_messages": {
+                    "invalid": "Fundraiser amount is invalid",
+                    "blank": "Fundraiser amount is required",
+                }
+            },
+        }
 
     def create(self, validated_data):
         # To create a foreign key relationship with user

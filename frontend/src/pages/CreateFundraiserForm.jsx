@@ -17,11 +17,13 @@ const INITIAL_DATA = {
 };
 export function CreateFundraiserForm() {
     const [fundraiserInfo, setFundraiserInfo] = useState(INITIAL_DATA);
+    const [errors, setErrors] = useState({});
 
     const startDateRef = useRef(null);
     const endDateRef = useRef(null);
 
     const todayDate = dayjs().format("YYYY-MM-DD");
+    const hasErrors = Object.keys(errors).length === 0 ? false : true;
 
     useEffect(() => {
         setFundraiserInfo((prevState) => {
@@ -89,14 +91,29 @@ export function CreateFundraiserForm() {
                 },
                 withCredentials: true,
             });
+
+            setErrors({});
         } catch (error) {
-            console.log(error);
+            if (error.response.status === 422) {
+                let errors = {};
+
+                // Errors messages are received in "error_name": ["Error"] format
+                for (const [key, value] of Object.entries(error.response?.data)) {
+                    errors = {
+                        ...errors,
+                        [key]: value[0],
+                    };
+                }
+                setErrors(errors);
+            } else {
+                toast.error("Something went wrong. Please try again later.");
+            }
         }
     };
 
     return (
         <div className="mt-10 container mx-auto min-h-screen mb-6">
-            <form className="mx-auto md:w-8/12" onSubmit={onSubmit}>
+            <form className="mx-auto md:w-8/12" onSubmit={onSubmit} noValidate>
                 <fieldset className="uk-fieldset">
                     <legend className="mx-auto">
                         <div className="flex flex-col items-center py-12">
@@ -120,7 +137,7 @@ export function CreateFundraiserForm() {
                             Name
                         </label>
                         <input
-                            className="uk-input uk-form-large"
+                            className={"uk-input uk-form-large" + " " + (errors?.name && "uk-form-danger")}
                             id="name"
                             name="name"
                             type="text"
@@ -130,6 +147,8 @@ export function CreateFundraiserForm() {
                             required
                             minLength={10}
                         />
+
+                        {errors?.name && <span className="text-sm text-red-600 font-black">*{errors.name}</span>}
                     </div>
 
                     {/* About */}
@@ -138,7 +157,7 @@ export function CreateFundraiserForm() {
                             About
                         </label>
                         <textarea
-                            className="uk-textarea uk-form-large"
+                            className={"uk-textarea uk-form-large" + (errors?.about && " uk-form-danger")}
                             rows="5"
                             placeholder="Write a short introduction about your fundraiser"
                             aria-label="Textarea"
@@ -148,6 +167,7 @@ export function CreateFundraiserForm() {
                             required
                             minLength={20}
                         />
+                        {errors?.about && <span className="text-sm text-red-600 font-black">*{errors.about}</span>}
                     </div>
 
                     {/* Details */}
@@ -156,7 +176,7 @@ export function CreateFundraiserForm() {
                             Details
                         </label>
                         <textarea
-                            className="uk-textarea uk-form-large"
+                            className={"uk-textarea uk-form-large" + (errors?.details && " uk-form-danger")}
                             rows="5"
                             placeholder="Write some details about your fundraiser"
                             aria-label="Textarea"
@@ -166,6 +186,7 @@ export function CreateFundraiserForm() {
                             required
                             minLength={20}
                         />
+                        {errors?.details && <span className="text-sm text-red-600 font-black">*{errors.details}</span>}
                     </div>
 
                     <div>

@@ -22,11 +22,27 @@ class Fundraiser(models.Model):
     uuid = models.UUIDField(
         _("UUID for the fundraiser"), default=uuid.uuid4, editable=False
     )
-    name = models.CharField(_("Name of the fundraiser"), max_length=120)
+    name = models.CharField(
+        _("Name of the fundraiser"),
+        max_length=120,
+        error_messages={
+            "blank": "Fundraiser name is required.",
+            "required": "Fundraiser name is required",
+        },
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True, unique=True)
-    about = models.TextField(_("Introduction regarding the fundraiser"))
-    details = models.TextField(_("Details regarding the fundraiser"))
+    about = models.TextField(
+        _("Introduction regarding the fundraiser"),
+        error_messages={"blank": "About field cannot be blank"},
+    )
+    details = models.TextField(
+        _("Details regarding the fundraiser"),
+        error_messages={
+            "blank": "Fundraiser details are required.",
+            "required": "Fundraiser details are required",
+        },
+    )
     photos = models.FileField(upload_to=fundraiser_directory_path)
     amount_required = MoneyField(
         decimal_places=0,
