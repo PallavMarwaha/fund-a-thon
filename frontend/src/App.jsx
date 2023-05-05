@@ -1,7 +1,7 @@
 import { routes } from "./routes";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { AuthProvider } from "react-auth-kit";
+import { AuthProvider, RequireAuth, useIsAuthenticated } from "react-auth-kit";
 
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
@@ -9,16 +9,27 @@ import { SignUp } from "./pages/SignUp";
 import { PostDetail } from "./pages/PostDetail";
 import { User } from "./pages/User";
 import { Fundraiser } from "./pages/Fundraiser";
+import { CreateFundraiserForm } from "./pages/CreateFundraiserForm";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
 
 axios.defaults.baseURL = `http://localhost:8000`;
+// For Token authentication
+axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
 
 function App() {
+    //https://github.com/react-auth-kit/react-auth-kit/issues/1023
+    const PrivateRoute = ({ Component }) => {
+        const isAuthenticated = useIsAuthenticated();
+        const auth = isAuthenticated();
+        return auth ? <Component /> : <Navigate to={routes.account.login} />;
+    };
+
     return (
         <>
             {/* // Needs to be initialized once */}
@@ -42,7 +53,11 @@ function App() {
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
-                        <Route path={":fundraiserSlug"} element={<PostDetail />} />
+                        <Route path={routes.fundraisers.detail} element={<PostDetail />} />
+                        <Route
+                            path={routes.fundraisers.create}
+                            element={<PrivateRoute Component={CreateFundraiserForm} />}
+                        />
                     </Route>
                 </Routes>
             </AuthProvider>

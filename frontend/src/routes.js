@@ -6,5 +6,6 @@ export const routes = {
     },
     fundraisers: {
         detail: ":fundraiserSlug",
+        create: "/fundraisers/create",
     },
 };

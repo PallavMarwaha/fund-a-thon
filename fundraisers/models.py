@@ -6,6 +6,7 @@ from djmoney.models.fields import MoneyField
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
+from djmoney.models.validators import MaxMoneyValidator, MinMoneyValidator
 
 User = get_user_model()
 
@@ -21,13 +22,41 @@ class Fundraiser(models.Model):
     uuid = models.UUIDField(
         _("UUID for the fundraiser"), default=uuid.uuid4, editable=False
     )
-    name = models.CharField(_("Name of the fundraiser"), max_length=120)
+    name = models.CharField(
+        _("Name of the fundraiser"),
+        max_length=120,
+        error_messages={
+            "blank": "Fundraiser name is required.",
+            "required": "Fundraiser name is required",
+        },
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True, unique=True)
-    details = models.TextField(_("Details regarding the fundraiser"))
+    about = models.TextField(
+        _("Introduction regarding the fundraiser"),
+        error_messages={"blank": "About field cannot be blank"},
+    )
+    details = models.TextField(
+        _("Details regarding the fundraiser"),
+        error_messages={
+            "blank": "Fundraiser details are required.",
+            "required": "Fundraiser details are required",
+        },
+    )
     photos = models.FileField(upload_to=fundraiser_directory_path)
-    amount_required = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
-    amount_raised = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
+    amount_required = MoneyField(
+        decimal_places=0,
+        max_digits=5,
+        default_currency="INR",
+        validators=[MinMoneyValidator(1000), MaxMoneyValidator(10000)],
+    )
+    amount_raised = MoneyField(
+        decimal_places=0,
+        max_digits=5,
+        default_currency="INR",
+        validators=[MaxMoneyValidator(10000)],
+        default=0,
+    )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_deleted = models.BooleanField(
