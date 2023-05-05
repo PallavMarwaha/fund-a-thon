@@ -137,7 +137,7 @@ export function CreateFundraiserForm() {
                             Name
                         </label>
                         <input
-                            className={"uk-input uk-form-large" + " " + (errors?.name && "uk-form-danger")}
+                            className={"uk-input uk-form-large" + " " + (errors?.name && "border border-red-500")}
                             id="name"
                             name="name"
                             type="text"
@@ -157,7 +157,7 @@ export function CreateFundraiserForm() {
                             About
                         </label>
                         <textarea
-                            className={"uk-textarea uk-form-large" + (errors?.about && " uk-form-danger")}
+                            className={"uk-textarea uk-form-large" + (errors?.about && " border border-red-500")}
                             rows="5"
                             placeholder="Write a short introduction about your fundraiser"
                             aria-label="Textarea"
@@ -176,7 +176,7 @@ export function CreateFundraiserForm() {
                             Details
                         </label>
                         <textarea
-                            className={"uk-textarea uk-form-large" + (errors?.details && " uk-form-danger")}
+                            className={"uk-textarea uk-form-large" + (errors?.details && " border border-red-500")}
                             rows="5"
                             placeholder="Write some details about your fundraiser"
                             aria-label="Textarea"
