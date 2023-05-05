@@ -6,6 +6,7 @@ from djmoney.models.fields import MoneyField
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
+from djmoney.models.validators import MaxMoneyValidator, MinMoneyValidator
 
 User = get_user_model()
 
@@ -27,8 +28,18 @@ class Fundraiser(models.Model):
     about = models.TextField(_("Introduction regarding the fundraiser"))
     details = models.TextField(_("Details regarding the fundraiser"))
     photos = models.FileField(upload_to=fundraiser_directory_path)
-    amount_required = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
-    amount_raised = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
+    amount_required = MoneyField(
+        decimal_places=0,
+        max_digits=5,
+        default_currency="INR",
+        validators=[MinMoneyValidator(1000), MaxMoneyValidator(10000)],
+    )
+    amount_raised = MoneyField(
+        decimal_places=0,
+        max_digits=5,
+        default_currency="INR",
+        validators=[MinMoneyValidator(1000), MaxMoneyValidator(10000)],
+    )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_deleted = models.BooleanField(
