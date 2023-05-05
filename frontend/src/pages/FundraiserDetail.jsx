@@ -80,9 +80,9 @@ export function FundraiserDetail() {
                             , Published on {createdAt}
                         </p>
                         <h1 className="text-2xl font-bold pb-3">Introduction</h1>
-                        <p className="pb-3">{fundraiserDetails.about}</p>
+                        <p className="pb-3 text-justify">{fundraiserDetails.about}</p>
                         <h1 className="text-2xl font-bold pb-3">Details</h1>
-                        <p className="pb-3">{fundraiserDetails.details} </p>
+                        <p className="pb-3 text-justify">{fundraiserDetails.details} </p>
 
                         <hr className="m-4" />
 
