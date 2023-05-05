@@ -2,8 +2,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from djmoney.contrib.django_rest_framework import MoneyField
 from djmoney.models.validators import MaxMoneyValidator, MinMoneyValidator
+from django.contrib.auth import get_user_model
 
 from .models import Fundraiser
+
+User = get_user_model()
 
 
 class CreateFundraiserSerializer(serializers.ModelSerializer):
@@ -68,3 +71,37 @@ class CreateFundraiserSerializer(serializers.ModelSerializer):
         fundraiser_obj = Fundraiser.objects.create(**validated_data, user=user)
 
         return fundraiser_obj
+
+
+class FundraiserUserDetailsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for sharing user details for a fundraiser.
+    """
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+
+class FundraiserDetailsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for sharing details about a fundraiser.
+    """
+
+    user = FundraiserUserDetailsSerializer()
+
+    class Meta:
+        model = Fundraiser
+        fields = [
+            "name",
+            "slug",
+            "about",
+            "details",
+            "user",
+            "amount_required",
+            "amount_raised",
+            "photos",
+            "start_date",
+            "end_date",
+            "created_at",
+        ]
