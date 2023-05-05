@@ -1,4 +1,4 @@
-export function PostDetail() {
+export function FundraiserDetail() {
     return (
         <div className="md:container mx-auto flex flex-wrap py-6">
             <section className="w-full md:w-2/3 flex flex-col items-center px-3 mx-auto">
@@ -88,7 +88,7 @@ export function PostDetail() {
                         <div>
                             <div className="w-full bg-white shadow flex flex-col my-4 p-6">
                                 <p className="text-xl font-semibold pb-5">Photos</p>
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-3 gap-3 justify-items-center">
                                     <img
                                         className="hover:opacity-75"
                                         src="https://source.unsplash.com/collection/1346951/150x150?sig=1"
