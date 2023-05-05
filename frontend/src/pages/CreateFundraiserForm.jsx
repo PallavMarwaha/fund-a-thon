@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { routes } from "../routes";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const INITIAL_DATA = {
     name: "",
@@ -66,9 +67,34 @@ export function CreateFundraiserForm() {
         });
     };
 
+    const onSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        for (const [key, val] of Object.entries(fundraiserInfo)) {
+            formData.append(key, val);
+        }
+
+        for (const [key, value] of Object.entries(formData)) {
+            console.log(key, value);
+        }
+
+        try {
+            const apiUrl = "/fundraisers/create/";
+            const response = await axios.post(apiUrl, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="mt-10 container mx-auto min-h-screen mb-6">
-            <form className="mx-auto md:w-8/12">
+            <form className="mx-auto md:w-8/12" onSubmit={onSubmit}>
                 <fieldset className="uk-fieldset">
                     <legend className="mx-auto">
                         <div className="flex flex-col items-center py-12">
@@ -196,12 +222,33 @@ export function CreateFundraiserForm() {
                             accept="image/*"
                         />
                     </div>
+
+                    {/* Amount Required */}
+                    <div className="uk-margin">
+                        <label htmlFor="amount_required" className="uk-label bg-blue-700 mb-2">
+                            Amount required
+                        </label>
+                        <input
+                            className="uk-input"
+                            type="number"
+                            max={10000}
+                            min={1000}
+                            value={fundraiserInfo.amount_required}
+                            name="amount_required"
+                            id="amount_required"
+                            aria-label="Input"
+                            placeholder="Rs. 1000"
+                            onChange={updateFundraiserInfo}
+                        />
+                        <span className="text-xs text-gray-600 uppercase">*In INR only</span>
+                    </div>
+
                     <div className="flex justify-between">
                         <button className="uk-button uk-button-default bg-gray-100 hover:bg-gray-200 text-md">
                             SUBMIT
                         </button>
                         <button
-                            type="button"
+                            type="reset"
                             className="inline-block bg-neutral-800 px-6 pb-2 pt-2.5 text-md uppercase leading-normal text-neutral-50 shadow-[0_4px_9px_-4px_rgba(51,45,45,0.7)] transition duration-150 ease-in-out hover:bg-neutral-800 hover:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] focus:bg-neutral-800 focus:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] focus:outline-none focus:ring-0 active:bg-neutral-900 active:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] dark:bg-neutral-900 dark:shadow-[0_4px_9px_-4px_#030202] dark:hover:bg-neutral-900 dark:hover:shadow-[0_8px_9px_-4px_rgba(3,2,2,0.3),0_4px_18px_0_rgba(3,2,2,0.2)] dark:focus:bg-neutral-900 dark:focus:shadow-[0_8px_9px_-4px_rgba(3,2,2,0.3),0_4px_18px_0_rgba(3,2,2,0.2)] dark:active:bg-neutral-900 dark:active:shadow-[0_8px_9px_-4px_rgba(3,2,2,0.3),0_4px_18px_0_rgba(3,2,2,0.2)]">
                             RESET
                         </button>
