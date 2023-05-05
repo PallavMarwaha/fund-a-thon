@@ -13,8 +13,10 @@ from rest_framework.authentication import (
     TokenAuthentication,
 )
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import AllowAny
 
-from .serializers import CreateFundraiserSerializer
+from .serializers import CreateFundraiserSerializer, FundraiserDetailsSerializer
+from .models import Fundraiser
 
 
 @api_view(["POST"])
@@ -22,6 +24,9 @@ from .serializers import CreateFundraiserSerializer
 @parser_classes([FormParser, MultiPartParser])
 @is_student_required
 def create_fundraiser(request):
+    """
+    API endpoint to create a new fundraiser. Authentication and authorization required.
+    """
     serializer = CreateFundraiserSerializer(
         data=request.data, context={"user": request.user}
     )
@@ -30,5 +35,24 @@ def create_fundraiser(request):
         serializer.save()
         return Response({"detail": "Fundraiser created successfully."})
     else:
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def fundraiser_details(request, slug):
+    """
+    API endpoint for returning fundraiser details matched against the fundraiser slug.
+    Returns fundraiser details including user details or 404 if not available.
+    """
+    try:
+        fundraiser_obj = Fundraiser.objects.get(slug=slug)
+    except Fundraiser.DoesNotExist:
+        return Response(
+            {"detail": "Fundraiser not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    serializer = FundraiserDetailsSerializer(fundraiser_obj)
+
+    return Response(serializer.data)

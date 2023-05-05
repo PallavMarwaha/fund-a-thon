@@ -6,7 +6,7 @@ import { AuthProvider, RequireAuth, useIsAuthenticated } from "react-auth-kit";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
-import { PostDetail } from "./pages/PostDetail";
+import { FundraiserDetail } from "./pages/FundraiserDetail";
 import { User } from "./pages/User";
 import { Fundraiser } from "./pages/Fundraiser";
 import { CreateFundraiserForm } from "./pages/CreateFundraiserForm";
@@ -55,7 +55,7 @@ function App() {
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
-                        <Route path={routes.fundraisers.detail} element={<PostDetail />} />
+                        <Route path={routes.fundraisers.detail} element={<FundraiserDetail />} />
                         <Route
                             path={routes.fundraisers.create}
                             element={<PrivateRoute Component={CreateFundraiserForm} />}
