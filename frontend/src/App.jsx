@@ -1,7 +1,7 @@
 import { routes } from "./routes";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { AuthProvider } from "react-auth-kit";
+import { AuthProvider, RequireAuth, useIsAuthenticated } from "react-auth-kit";
 
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
@@ -20,6 +20,13 @@ import "react-toastify/dist/ReactToastify.css";
 axios.defaults.baseURL = `http://localhost:8000`;
 
 function App() {
+    //https://github.com/react-auth-kit/react-auth-kit/issues/1023
+    const PrivateRoute = ({ Component }) => {
+        const isAuthenticated = useIsAuthenticated();
+        const auth = isAuthenticated();
+        return auth ? <Component /> : <Navigate to={routes.account.login} />;
+    };
+
     return (
         <>
             {/* // Needs to be initialized once */}
@@ -44,7 +51,10 @@ function App() {
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
                         <Route path={routes.fundraisers.detail} element={<PostDetail />} />
-                        <Route path={routes.fundraisers.create} element={<CreateFundraiserForm />} />
+                        <Route
+                            path={routes.fundraisers.create}
+                            element={<PrivateRoute Component={CreateFundraiserForm} />}
+                        />
                     </Route>
                 </Routes>
             </AuthProvider>
