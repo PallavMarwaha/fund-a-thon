@@ -1,0 +1,25 @@
+.loader{
+    display: block;
+    position: relative;
+    height: 8px;
+    width: 80%;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  .loader:after{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: #3c5bf8;
+    animation: 2s prog ease-in infinite;
+  }
+  
+  @keyframes prog {
+    to  {   width: 100%;}
+  }
+  
