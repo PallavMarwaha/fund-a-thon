@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 const INITIAL_DATA = {
     name: "",
     details: "",
+    about: "",
     amount_required: "",
     photos: {},
     start_date: dayjs().format("YYYY-MM-DD"),
@@ -103,6 +104,25 @@ export function CreateFundraiserForm() {
                         />
                     </div>
 
+                    {/* About */}
+                    <div className="uk-margin">
+                        <label htmlFor="about" className="uk-label mb-2 bg-blue-700">
+                            About
+                        </label>
+                        <textarea
+                            className="uk-textarea uk-form-large"
+                            rows="5"
+                            placeholder="Write a short introduction about your fundraiser"
+                            aria-label="Textarea"
+                            name="about"
+                            id="about"
+                            onChange={updateFundraiserInfo}
+                            required
+                            minLength={20}
+                        />
+                    </div>
+
+                    {/* Details */}
                     <div className="uk-margin">
                         <label htmlFor="details" className="uk-label mb-2 bg-blue-700">
                             Details
@@ -110,7 +130,7 @@ export function CreateFundraiserForm() {
                         <textarea
                             className="uk-textarea uk-form-large"
                             rows="5"
-                            placeholder="Textarea"
+                            placeholder="Write some details about your fundraiser"
                             aria-label="Textarea"
                             name="details"
                             id="details"
