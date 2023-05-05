@@ -10,6 +10,7 @@ import { PostDetail } from "./pages/PostDetail";
 import { User } from "./pages/User";
 import { Fundraiser } from "./pages/Fundraiser";
 import { CreateFundraiserForm } from "./pages/CreateFundraiserForm";
+import { About } from "./pages/About";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -42,6 +43,7 @@ function App() {
                 <Navbar />
                 <Routes>
                     <Route path="/" element={<Home />}></Route>
+                    <Route path={routes.about} element={<About />}></Route>
                     <Route path="account" element={<User />}>
                         <Route
                             path={routes.account.login}
