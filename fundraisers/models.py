@@ -38,7 +38,8 @@ class Fundraiser(models.Model):
         decimal_places=0,
         max_digits=5,
         default_currency="INR",
-        validators=[MinMoneyValidator(1000), MaxMoneyValidator(10000)],
+        validators=[MaxMoneyValidator(10000)],
+        default=0,
     )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
