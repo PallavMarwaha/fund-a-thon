@@ -6,7 +6,7 @@ from .models import Fundraiser, Donation, FundraiserLike, FundraiserComment
 
 
 class FunraiserAdmin(admin.ModelAdmin):
-    exclude = ("slug",)
+    readonly_fields = ("slug", "uuid")
 
 
 admin.site.register(Fundraiser, FunraiserAdmin)

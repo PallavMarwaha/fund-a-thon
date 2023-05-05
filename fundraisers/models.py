@@ -19,9 +19,7 @@ def fundraiser_directory_path(instance, filename):
 
 
 class Fundraiser(models.Model):
-    uuid = models.UUIDField(
-        _("UUID for the fundraiser"), default=uuid.uuid4, editable=False
-    )
+    uuid = models.UUIDField(_("UUID for the fundraiser"), default=uuid.uuid4)
     name = models.CharField(
         _("Name of the fundraiser"),
         max_length=120,
@@ -71,7 +69,7 @@ class Fundraiser(models.Model):
     updated_at = models.DateField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        self.slug = slugify(f"{self.name} {self.id}")
         super(Fundraiser, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
