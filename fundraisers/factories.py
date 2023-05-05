@@ -5,13 +5,14 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 
-from .models import Fundraiser
+from .models import Fundraiser, FundraiserComment
 
 User = get_user_model()
 
 fake = Faker()
 
 user_ids = list(User.objects.filter(is_student=True).values_list("id", flat=True))
+fundraiser_ids = list(Fundraiser.objects.values_list("id", flat=True))
 
 
 class FundraiserFactory(factory.django.DjangoModelFactory):
@@ -59,3 +60,29 @@ class FundraiserFactory(factory.django.DjangoModelFactory):
             x += "\n" + fake.paragraph(nb_sentences=20) + "\n"
 
         return x.strip()
+
+
+class FundraiserCommentFactory(factory.django.DjangoModelFactory):
+    """
+    Generates random fundraiser comment objects with randomized students and fundraisers.
+    """
+
+    class Meta:
+        model = FundraiserComment
+
+    @factory.lazy_attribute
+    def fundraiser(self):
+        random_fundraiser_id = random.choice(fundraiser_ids)
+        return Fundraiser.objects.get(id=random_fundraiser_id)
+
+    @factory.lazy_attribute
+    def user(self):
+        random_user_id = fake.random_element(elements=user_ids)
+        return User.objects.get(id=random_user_id)
+
+    text = factory.Faker("sentence", nb_words=20)
+    commented_at = factory.Faker(
+        "date_between_dates",
+        date_start=datetime.now(),
+        date_end=datetime.now() + timedelta(days=30),
+    )
