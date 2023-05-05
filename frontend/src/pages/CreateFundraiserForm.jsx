@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { routes } from "../routes";
+import { Link } from "react-router-dom";
 
 const INITIAL_DATA = {
     name: "",
@@ -64,10 +66,26 @@ export function CreateFundraiserForm() {
     };
 
     return (
-        <div className="mt-10 container mx-auto min-h-screen">
+        <div className="mt-10 container mx-auto min-h-screen mb-6">
             <form className="mx-auto md:w-8/12">
                 <fieldset className="uk-fieldset">
-                    <legend className="uk-legend">Create a new fundraiser</legend>
+                    <legend className="mx-auto">
+                        <div className="flex flex-col items-center py-12">
+                            <Link
+                                className="font-bold text-gray-800 uppercase text-center hover:text-gray-700 text-5xl"
+                                to={routes.home}>
+                                Fund-a-Thon
+                            </Link>
+                            <p className="text-lg text-gray-600 text-center">
+                                A micro fundraiser website for college students!
+                            </p>
+                        </div>
+                    </legend>
+                    <div>
+                        <p className="text-xl uppercase text-gray-600 text-center mt-4">
+                            Create your own fundraiser today.
+                        </p>
+                    </div>
                     <div className="uk-margin">
                         <label htmlFor="name" className="uk-label bg-blue-700 mb-2">
                             Name
