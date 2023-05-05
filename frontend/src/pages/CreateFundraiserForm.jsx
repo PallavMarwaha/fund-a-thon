@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { routes } from "../routes";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookie from "js-cookie";
 
@@ -16,11 +16,13 @@ const INITIAL_DATA = {
     end_date: dayjs().add(30, "days").format("YYYY-MM-DD"),
 };
 export function CreateFundraiserForm() {
-    const [fundraiserInfo, setFundraiserInfo] = useState(INITIAL_DATA);
+    const [fundraiserInfo, setFundraiserInfo] = useState(structuredClone(INITIAL_DATA));
     const [errors, setErrors] = useState({});
 
     const startDateRef = useRef(null);
     const endDateRef = useRef(null);
+
+    const navigate = useNavigate();
 
     const todayDate = dayjs().format("YYYY-MM-DD");
     const hasErrors = Object.keys(errors).length === 0 ? false : true;
@@ -70,6 +72,11 @@ export function CreateFundraiserForm() {
         });
     };
 
+    /**
+     * Submits fundraiser info as form data to the server.
+     * Redirects to homepage after success.
+     * @param {*} e
+     */
     const onSubmit = async (e) => {
         e.preventDefault();
 
@@ -77,10 +84,6 @@ export function CreateFundraiserForm() {
 
         for (const [key, val] of Object.entries(fundraiserInfo)) {
             formData.append(key, val);
-        }
-
-        for (const [key, value] of Object.entries(formData)) {
-            console.log(key, value);
         }
 
         try {
@@ -93,6 +96,12 @@ export function CreateFundraiserForm() {
             });
 
             setErrors({});
+
+            toast.success("You've successfully created a new fundraiser!");
+
+            setTimeout(() => {
+                navigate(routes.home);
+            }, 2000);
         } catch (error) {
             if (error.response.status === 422) {
                 let errors = {};
@@ -105,15 +114,41 @@ export function CreateFundraiserForm() {
                     };
                 }
                 setErrors(errors);
+                toast.error("Your form has some errors. Please try again.", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+            } else if (error.response.status === 403) {
+                toast.error("You are not authorized to create a fundraiser. Please try logging in again.");
             } else {
                 toast.error("Something went wrong. Please try again later.");
             }
         }
     };
 
+    /**
+     * Resets the form and any errors
+     * @param {*} e
+     */
+    const onReset = (e) => {
+        e.preventDefault();
+
+        setErrors({});
+        // setFundraiserInfo({
+        //     name: "",
+        //     details: "",
+        //     about: "",
+        //     amount_required: "",
+        //     photos: {},
+        //     start_date: dayjs().format("YYYY-MM-DD"),
+        //     end_date: dayjs().add(30, "days").format("YYYY-MM-DD"),
+        // });
+
+        setFundraiserInfo(INITIAL_DATA);
+    };
+
     return (
         <div className="mt-10 container mx-auto min-h-screen mb-6">
-            <form className="mx-auto md:w-8/12" onSubmit={onSubmit} noValidate>
+            <form className="mx-auto md:w-8/12" onSubmit={onSubmit} noValidate onReset={onReset}>
                 <fieldset className="uk-fieldset">
                     <legend className="mx-auto">
                         <div className="flex flex-col items-center py-12">
@@ -144,6 +179,7 @@ export function CreateFundraiserForm() {
                             placeholder="Ex: Robotics fundraiser"
                             aria-label="Input"
                             onChange={updateFundraiserInfo}
+                            value={fundraiserInfo.name}
                             required
                             minLength={10}
                         />
@@ -163,6 +199,7 @@ export function CreateFundraiserForm() {
                             aria-label="Textarea"
                             name="about"
                             id="about"
+                            value={fundraiserInfo.about}
                             onChange={updateFundraiserInfo}
                             required
                             minLength={20}
@@ -182,6 +219,7 @@ export function CreateFundraiserForm() {
                             aria-label="Textarea"
                             name="details"
                             id="details"
+                            value={fundraiserInfo.details}
                             onChange={updateFundraiserInfo}
                             required
                             minLength={20}
@@ -244,6 +282,9 @@ export function CreateFundraiserForm() {
                             required
                             accept="image/*"
                         />
+                        {errors?.photos && (
+                            <span className="text-sm text-red-600 font-black block">*{errors.photos}</span>
+                        )}
                     </div>
 
                     {/* Amount Required */}
@@ -264,6 +305,9 @@ export function CreateFundraiserForm() {
                             onChange={updateFundraiserInfo}
                         />
                         <span className="text-xs text-gray-600 uppercase">*In INR only</span>
+                        {errors?.amount_required && (
+                            <span className="text-sm text-red-600 font-black block">*{errors.amount_required}</span>
+                        )}
                     </div>
 
                     <div className="flex justify-between">
