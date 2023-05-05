@@ -24,6 +24,7 @@ class Fundraiser(models.Model):
     name = models.CharField(_("Name of the fundraiser"), max_length=120)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True, unique=True)
+    about = models.TextField(_("Introduction regarding the fundraiser"))
     details = models.TextField(_("Details regarding the fundraiser"))
     photos = models.FileField(upload_to=fundraiser_directory_path)
     amount_required = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
