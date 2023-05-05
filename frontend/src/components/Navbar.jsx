@@ -18,9 +18,9 @@ export function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <a className="hover:text-gray-200 hover:underline px-4" href="#">
+                            <Link className="hover:text-gray-200 hover:underline px-4" to={routes.about}>
                                 About
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </nav>
