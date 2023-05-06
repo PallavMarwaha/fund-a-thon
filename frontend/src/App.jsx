@@ -18,6 +18,7 @@ import axios from "axios";
 
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
+import { FundraisersList } from "./pages/FundraisersList";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -55,6 +56,7 @@ function App() {
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
+                        <Route index element={<FundraisersList />} />
                         <Route path={routes.fundraisers.detail} element={<FundraiserDetail />} />
                         <Route
                             path={routes.fundraisers.create}
