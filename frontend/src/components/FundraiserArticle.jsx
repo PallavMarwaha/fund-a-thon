@@ -1,30 +1,32 @@
-export function FundraiserArticle() {
+import { Link } from "react-router-dom";
+import truncate from "../utils/truncate";
+
+export function FundraiserArticle(props) {
+    const { name, details, about, photos, slug, start_date, end_date, created_at, url, user } = props;
     return (
         <article className="flex flex-col shadow my-4 text-justify hover:scale-105 transition ease-in-out ">
-            <a href="#" className="hover:opacity-75">
+            <span className="hover:opacity-75">
                 <img src="https://source.unsplash.com/collection/1346951/1000x500?sig=1" />
-            </a>
+            </span>
             <div className="bg-white flex flex-col justify-start p-6">
-                <a href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
-                    Technology
-                </a>
-                <a href="#" className="text-3xl font-bold hover:text-gray-700 pb-4">
-                    Lorem Ipsum Dolor Sit Amet Dolor Sit Amet
-                </a>
+                <span className="text-blue-700 text-sm font-bold uppercase pb-4">
+                    {start_date} - {end_date}
+                </span>
+                <Link to={url} className="text-3xl text-left font-bold hover:text-gray-700 pb-4">
+                    {truncate(name, 50)}
+                </Link>
                 <p href="#" className="text-sm pb-3">
-                    By{" "}
-                    <a href="#" className="font-semibold hover:text-gray-800">
-                        David Grzyb
-                    </a>
-                    , Published on April 25th, 2020
+                    By
+                    <Link to={url} className="font-semibold uppercase hover:text-gray-800">
+                        : {`${user.first_name} ${user.last_name}`}
+                    </Link>
+                    , Published on {created_at}
                 </p>
-                <a href="#" className="pb-6">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus quis porta dui. Ut eu iaculis
-                    massa. Sed ornare ligula lacus, quis iaculis dui porta volutpat. In sit amet posuere magna..
-                </a>
-                <a href="#" className="uppercase text-gray-800 hover:text-black">
+                <p className="pb-6">{truncate(about, 50)}</p>
+
+                <Link to={url} className="uppercase text-gray-800 hover:text-black">
                     Continue Reading <i className="fas fa-arrow-right"></i>
-                </a>
+                </Link>
             </div>
         </article>
     );
