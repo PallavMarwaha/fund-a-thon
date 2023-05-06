@@ -14,8 +14,13 @@ from rest_framework.authentication import (
 )
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
+from rest_framework.pagination import PageNumberPagination
 
-from .serializers import CreateFundraiserSerializer, FundraiserDetailsSerializer
+from .serializers import (
+    CreateFundraiserSerializer,
+    FundraiserDetailsSerializer,
+    FundraisersListSerializer,
+)
 from .models import Fundraiser
 
 
@@ -56,3 +61,20 @@ def fundraiser_details(request, slug):
     serializer = FundraiserDetailsSerializer(fundraiser_obj)
 
     return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def fundraisers_list(request):
+    """
+    API endpoint to return paginated fundraisers list
+    """
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    fundraisers = Fundraiser.objects.all()
+
+    result_page = paginator.paginate_queryset(fundraisers, request)
+
+    serializer = FundraisersListSerializer(result_page, many=True)
+
+    return paginator.get_paginated_response(serializer.data)

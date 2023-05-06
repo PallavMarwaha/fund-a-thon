@@ -105,3 +105,21 @@ class FundraiserDetailsSerializer(serializers.ModelSerializer):
             "end_date",
             "created_at",
         ]
+
+
+class FundraisersListSerializer(serializers.ModelSerializer):
+    """
+    Serializes info for fundraisers list view.
+    """
+
+    class Meta:
+        model = Fundraiser
+        fields = [
+            "name",
+            "photos",
+            "about",
+            "details",
+            "slug",
+            "start_date",
+            "end_date",
+        ]
