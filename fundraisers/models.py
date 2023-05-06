@@ -69,7 +69,7 @@ class Fundraiser(models.Model):
     updated_at = models.DateField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(f"{self.name} {self.id}")
+        self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
         super(Fundraiser, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
