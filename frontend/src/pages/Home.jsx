@@ -1,20 +1,12 @@
 import { Link } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { routes } from "../routes";
+import { Header } from "../components/Header";
 
 export function Home() {
     return (
         <div className="bg-white font-family-karla">
-            <header className="w-full container mx-auto">
-                <div className="flex flex-col items-center py-12">
-                    <a className="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl" href="#">
-                        Fund-a-Thon
-                    </a>
-                    <p className="text-lg text-gray-600 text-center">
-                        A micro fundraiser website for college students!
-                    </p>
-                </div>
-            </header>
+            <Header />
 
             <nav className="w-full py-4 border-t border-b bg-gray-100">
                 <div className="block sm:hidden">
@@ -210,6 +202,11 @@ export function Home() {
                                 src="https://source.unsplash.com/collection/1346951/150x150?sig=9"
                             />
                         </div>
+                        <Link
+                            to={routes.fundraisers.base}
+                            className="w-full bg-blue-800 text-white font-bold text-sm uppercase rounded hover:bg-blue-700 flex items-center justify-center px-2 py-3 mt-4">
+                            See new fundraiser
+                        </Link>
                     </div>
                 </aside>
             </div>
