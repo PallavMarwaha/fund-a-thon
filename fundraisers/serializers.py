@@ -4,7 +4,7 @@ from djmoney.contrib.django_rest_framework import MoneyField
 from djmoney.models.validators import MaxMoneyValidator, MinMoneyValidator
 from django.contrib.auth import get_user_model
 
-from .models import Fundraiser
+from .models import Fundraiser, FundraiserComment
 
 User = get_user_model()
 
@@ -83,12 +83,26 @@ class FundraiserUserDetailsSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "email"]
 
 
+class FundraiserCommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for sharing comment details about a fundraiser.
+    """
+
+    user = FundraiserUserDetailsSerializer()
+
+    class Meta:
+        model = FundraiserComment
+
+        fields = ["user", "text", "created_at"]
+
+
 class FundraiserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer for sharing details about a fundraiser.
     """
 
     user = FundraiserUserDetailsSerializer()
+    comments = FundraiserCommentSerializer(many=True, source="fundraisercomment_set")
 
     class Meta:
         model = Fundraiser
@@ -98,6 +112,7 @@ class FundraiserDetailsSerializer(serializers.ModelSerializer):
             "about",
             "details",
             "user",
+            "comments",
             "amount_required",
             "amount_raised",
             "photos",
