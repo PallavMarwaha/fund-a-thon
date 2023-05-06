@@ -24,6 +24,19 @@ from .serializers import (
 from .models import Fundraiser
 
 
+class CustomPagination(PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response(
+            {
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "count": self.page.paginator.count,
+                "total_pages": self.page.paginator.num_pages,
+                "results": data,
+            }
+        )
+
+
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @parser_classes([FormParser, MultiPartParser])
@@ -69,9 +82,9 @@ def fundraisers_list(request):
     """
     API endpoint to return paginated fundraisers list
     """
-    paginator = PageNumberPagination()
-    paginator.page_size = 10
-    fundraisers = Fundraiser.objects.all()
+    paginator = CustomPagination()
+    paginator.page_size = 12
+    fundraisers = Fundraiser.objects.all().order_by("name")
 
     result_page = paginator.paginate_queryset(fundraisers, request)
 
