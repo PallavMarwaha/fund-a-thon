@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.db.models import Count
+
 from .decorators import is_student_required
 from rest_framework.response import Response
 from rest_framework import status
@@ -86,6 +88,28 @@ def fundraisers_list(request):
     paginator.page_size = 12
     fundraisers = Fundraiser.objects.all().order_by("name")
 
+    result_page = paginator.paginate_queryset(fundraisers, request)
+
+    serializer = FundraisersListSerializer(result_page, many=True)
+
+    return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def featured_fundraisers(request):
+    """
+    API endpoint to return a list of features fundraisers for homepage.
+    """
+
+    fundraisers = (
+        Fundraiser.objects.filter()
+        .annotate(total_likes=Count("fundraiserlike"))
+        .order_by("-total_likes")
+    )[:9]
+
+    paginator = CustomPagination()
+    paginator.page_size = 3
     result_page = paginator.paginate_queryset(fundraisers, request)
 
     serializer = FundraisersListSerializer(result_page, many=True)
