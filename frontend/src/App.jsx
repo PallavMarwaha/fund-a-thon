@@ -21,6 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import { FundraisersList } from "./pages/FundraisersList";
 import UserFundraisers from "./pages/UserFundraisers";
+import NotFound from "./pages/NotFound";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -62,6 +63,9 @@ function App() {
                             element={<PrivateRoute Component={CreateFundraiserForm} />}
                         />
                     </Route>
+
+                    {/* 404 */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </AuthProvider>
         </>
