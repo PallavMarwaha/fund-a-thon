@@ -20,6 +20,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import { FundraisersList } from "./pages/FundraisersList";
+import UserFundraisers from "./pages/UserFundraisers";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -49,7 +50,9 @@ function App() {
                     <Route path="account" element={<User />}>
                         <Route path={routes.account.login} element={<Login />}></Route>
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
-                        <Route path={routes.account.dashboard} element={<PrivateRoute Component={Dashboard} />} />
+                        <Route path={routes.account.dashboard.base} element={<PrivateRoute Component={Dashboard} />}>
+                            <Route path={routes.account.dashboard.fundraisers} element={<UserFundraisers />} />
+                        </Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
                         <Route index element={<FundraisersList />} />
