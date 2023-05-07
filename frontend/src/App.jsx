@@ -11,6 +11,7 @@ import { User } from "./pages/User";
 import { Fundraiser } from "./pages/Fundraiser";
 import { CreateFundraiserForm } from "./pages/CreateFundraiserForm";
 import { About } from "./pages/About";
+import Dashboard from "./pages/Dashboard";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -46,14 +47,9 @@ function App() {
                     <Route path="/" element={<Home />}></Route>
                     <Route path={routes.about} element={<About />}></Route>
                     <Route path="account" element={<User />}>
-                        <Route
-                            path={routes.account.login}
-                            element={
-                                // <AuthNotRequired>
-                                <Login />
-                                // </AuthNotRequired>
-                            }></Route>
+                        <Route path={routes.account.login} element={<Login />}></Route>
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
+                        <Route path={routes.account.dashboard} element={<PrivateRoute Component={Dashboard} />} />
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
                         <Route index element={<FundraisersList />} />
