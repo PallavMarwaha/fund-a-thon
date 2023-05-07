@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { Loader } from "../components/Loader";
+import FundraiserComment from "../components/FundraiserComment";
 
 export function FundraiserDetail() {
     const [fundraiserDetails, setFundraiserDetails] = useState({});
@@ -151,44 +152,21 @@ export function FundraiserDetail() {
                 <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
 
                 {/* Comments */}
-                <div>
-                    <h2 className="font-bold text-2xl m-2">Comments</h2>
-                    <article className="uk-comment bg-gray-50 p-4" role="comment">
-                        <header className="uk-comment-header">
-                            <div className="uk-grid-medium uk-flex-middle flex">
-                                <div className="uk-width-auto">
-                                    <img
-                                        className="uk-comment-avatar"
-                                        src="https://xsgames.co/randomusers/avatar.php?g=pixel"
-                                        width="80"
-                                        height="80"
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="uk-width-expand">
-                                    <h4 className="uk-comment-title uk-margin-remove">
-                                        <a className="uk-link-reset" href="#">
-                                            User
-                                        </a>
-                                    </h4>
-                                    <ul className="uk-comment-meta uk-subnav uk-subnav-divider uk-margin-remove-top">
-                                        <li>
-                                            <a href="#">12 days ago</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </header>
-                        <div className="uk-comment-body">
-                            <p>
-                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                                invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-                                accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-                                sanctus est Lorem ipsum dolor sit amet.
-                            </p>
-                        </div>
-                    </article>
-                </div>
+                {fundraiserDetails.comments.length > 0 && (
+                    <div>
+                        <h2 className="font-bold text-2xl m-2">Comments ({fundraiserDetails.comments.length})</h2>
+
+                        {fundraiserDetails.comments.map((comment, id) => {
+                            const created_at = dayjs(comment.created_at).format("DD MMMM, YYYY");
+
+                            const data = {
+                                ...comment,
+                                created_at,
+                            };
+                            return <FundraiserComment key={id} {...data} />;
+                        })}
+                    </div>
+                )}
 
                 {/* TODO: Add navigation and about author divs */}
                 {/* Previous and Next links */}
