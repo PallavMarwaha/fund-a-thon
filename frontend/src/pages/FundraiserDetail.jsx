@@ -152,19 +152,21 @@ export function FundraiserDetail() {
                 <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
 
                 {/* Comments */}
-                <div>
-                    <h2 className="font-bold text-2xl m-2">Comments ({fundraiserDetails.comments.length})</h2>
+                {fundraiserDetails.comments.length > 0 && (
+                    <div>
+                        <h2 className="font-bold text-2xl m-2">Comments ({fundraiserDetails.comments.length})</h2>
 
-                    {fundraiserDetails.comments.map((comment, id) => {
-                        const created_at = dayjs(comment.created_at).format("DD MMMM, YYYY");
+                        {fundraiserDetails.comments.map((comment, id) => {
+                            const created_at = dayjs(comment.created_at).format("DD MMMM, YYYY");
 
-                        const data = {
-                            ...comment,
-                            created_at,
-                        };
-                        return <FundraiserComment key={id} {...data} />;
-                    })}
-                </div>
+                            const data = {
+                                ...comment,
+                                created_at,
+                            };
+                            return <FundraiserComment key={id} {...data} />;
+                        })}
+                    </div>
+                )}
 
                 {/* TODO: Add navigation and about author divs */}
                 {/* Previous and Next links */}
