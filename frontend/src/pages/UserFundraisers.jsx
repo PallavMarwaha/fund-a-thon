@@ -1,27 +1,35 @@
+import Select from "react-select";
+
 export default function UserFundraisers() {
     return (
         <div className="mx-auto">
-            <header className="w-full container mx-auto">
+            <header className="w-full container mx-auto mt-10">
                 <div className="flex flex-col items-center py-12">
                     <a className="font-bold text-center whitespace-nowrap text-gray-800 uppercase hover:text-gray-700 text-5xl">
-                        Dashboard
+                        Fundraisers
                     </a>
                     <p className="text-lg text-gray-600 text-center">Here are your recently created fundraisers.</p>
                 </div>
             </header>
 
-            <div className="text-center">
+            {/* Search bar */}
+            <div className="text-center px-6">
                 <form>
-                    <fieldset className="uk-fieldset">
-                        <div className="uk-margin">
-                            <div className="uk-inline md:w-6/12">
-                                <a className="uk-form-icon" href="#" data-uk-icon="icon: search"></a>
-                                <input className="uk-input" type="text" aria-label="Clickable icon" />
-                            </div>
+                    <div className="md:flex justify-between">
+                        <div className="md:w-6/12">
+                            {/* <a className="uk-form-icon" href="#" data-uk-icon="icon: search"></a> */}
+                            <input
+                                className="uk-input"
+                                type="text"
+                                aria-label="Clickable icon"
+                                placeholder="Search..."
+                            />
                         </div>
-                    </fieldset>
+                        <Select className="mt-2 md:mt-0 md:w-2/12" placeholder="Sort by" />
+                    </div>
                 </form>
             </div>
+
             <div className="container p-6 mx-auto space-y-3 lg:space-y-0 lg:grid grid-cols-3 gap-3">
                 <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg h-fit">
                     <img
