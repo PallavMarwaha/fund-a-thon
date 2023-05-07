@@ -6,6 +6,7 @@ export const routes = {
         dashboard: {
             base: "/account/dashboard",
             fundraisers: "fundraisers",
+            settings: "settings",
         },
     },
     about: "/about",

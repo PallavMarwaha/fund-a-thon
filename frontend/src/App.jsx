@@ -23,6 +23,7 @@ import { FundraisersList } from "./pages/FundraisersList";
 import UserFundraisers from "./pages/UserFundraisers";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
+import UserSettings from "./pages/UserSettings";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -55,6 +56,7 @@ function App() {
                         <Route path={routes.account.dashboard.base} element={<PrivateRoute Component={Dashboard} />}>
                             <Route index element={<UserProfile />} />
                             <Route path={routes.account.dashboard.fundraisers} element={<UserFundraisers />} />
+                            <Route path={routes.account.dashboard.settings} element={<UserSettings />} />
                         </Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
