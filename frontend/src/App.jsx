@@ -11,6 +11,7 @@ import { User } from "./pages/User";
 import { Fundraiser } from "./pages/Fundraiser";
 import { CreateFundraiserForm } from "./pages/CreateFundraiserForm";
 import { About } from "./pages/About";
+import Dashboard from "./pages/Dashboard";
 
 import { AuthNotRequired } from "./utils/AuthNotRequired";
 import { ToastContainer } from "react-toastify";
@@ -19,6 +20,10 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import { FundraisersList } from "./pages/FundraisersList";
+import UserFundraisers from "./pages/UserFundraisers";
+import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
+import UserSettings from "./pages/UserSettings";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -46,14 +51,13 @@ function App() {
                     <Route path="/" element={<Home />}></Route>
                     <Route path={routes.about} element={<About />}></Route>
                     <Route path="account" element={<User />}>
-                        <Route
-                            path={routes.account.login}
-                            element={
-                                // <AuthNotRequired>
-                                <Login />
-                                // </AuthNotRequired>
-                            }></Route>
+                        <Route path={routes.account.login} element={<Login />}></Route>
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
+                        <Route path={routes.account.dashboard.base} element={<PrivateRoute Component={Dashboard} />}>
+                            <Route index element={<UserProfile />} />
+                            <Route path={routes.account.dashboard.fundraisers} element={<UserFundraisers />} />
+                            <Route path={routes.account.dashboard.settings} element={<UserSettings />} />
+                        </Route>
                     </Route>
                     <Route path="fundraisers" element={<Fundraiser />}>
                         <Route index element={<FundraisersList />} />
@@ -63,6 +67,9 @@ function App() {
                             element={<PrivateRoute Component={CreateFundraiserForm} />}
                         />
                     </Route>
+
+                    {/* 404 */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </AuthProvider>
         </>
