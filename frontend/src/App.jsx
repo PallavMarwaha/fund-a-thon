@@ -22,6 +22,7 @@ import Cookies from "js-cookie";
 import { FundraisersList } from "./pages/FundraisersList";
 import UserFundraisers from "./pages/UserFundraisers";
 import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
@@ -52,6 +53,7 @@ function App() {
                         <Route path={routes.account.login} element={<Login />}></Route>
                         <Route path={routes.account.signup} element={<SignUp />}></Route>
                         <Route path={routes.account.dashboard.base} element={<PrivateRoute Component={Dashboard} />}>
+                            <Route index element={<UserProfile />} />
                             <Route path={routes.account.dashboard.fundraisers} element={<UserFundraisers />} />
                         </Route>
                     </Route>
