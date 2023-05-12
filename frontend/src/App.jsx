@@ -24,10 +24,12 @@ import UserFundraisers from "./pages/UserFundraisers";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import UserSettings from "./pages/UserSettings";
+import UserFundraiserEdit from "./pages/UserFundraiserEdit";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
 axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
+axios.defaults.headers.get["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
 
 function App() {
     //https://github.com/react-auth-kit/react-auth-kit/issues/1023
@@ -65,6 +67,10 @@ function App() {
                         <Route
                             path={routes.fundraisers.create}
                             element={<PrivateRoute Component={CreateFundraiserForm} />}
+                        />
+                        <Route
+                            path={routes.fundraisers.edit}
+                            element={<PrivateRoute Component={UserFundraiserEdit} />}
                         />
                     </Route>
 

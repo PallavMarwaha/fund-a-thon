@@ -115,3 +115,23 @@ def featured_fundraisers(request):
     serializer = FundraisersListSerializer(result_page, many=True)
 
     return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(["GET", "POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@is_student_required
+def update_fundraiser(request, slug):
+    if request.method == "GET":
+        try:
+            fundraiser_obj = Fundraiser.objects.get(slug=slug, user=request.user)
+        except Fundraiser.DoesNotExist:
+            return Response(
+                {"detail": "Fundraiser not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = FundraiserDetailsSerializer(fundraiser_obj)
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+        return Response({"detail": "Hello world"})

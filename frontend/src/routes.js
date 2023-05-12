@@ -13,6 +13,7 @@ export const routes = {
     fundraisers: {
         base: "/fundraisers",
         detail: ":fundraiserSlug",
+        edit: ":fundraiserSlug/edit",
         create: "/fundraisers/create",
     },
 };
