@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import formatDates from "../utils/formatDates";
 import { Loader } from "../components/Loader";
+import { routes } from "../routes";
+import { toast } from "react-toastify";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -15,10 +17,14 @@ function UserFundraiserEdit() {
         photos: "",
         other_photos: "",
     });
+    const [formErrors, setFormErrors] = useState({});
+
     const routeParams = useParams();
     const { fundraiserSlug } = routeParams;
     const apiUrl = `/fundraisers/${fundraiserSlug}/edit/`;
     const { data, error, isLoading } = useSWR(apiUrl, fetcher);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!data) {
@@ -36,12 +42,21 @@ function UserFundraiserEdit() {
         });
     }, [data, isLoading]);
 
+    // For handling fetching and permission errors only.
+    useEffect(() => {
+        if (error) {
+            if (error.response.status === 404) {
+                toast.error("You don't have permission to edit this fundraiser");
+            } else {
+                toast.error("Something went wrong. Please try again later.");
+            }
+
+            navigate(routes.home);
+        }
+    }, [error, navigate]);
+
     if (isLoading) {
         return <Loader />;
-    }
-
-    if (error) {
-        return <>Something went wrong.</>;
     }
 
     const {
@@ -63,6 +78,7 @@ function UserFundraiserEdit() {
     const createdAt = formatDates(created_at);
     const fundraiserProgress = (parseInt(amount_raised) / parseInt(amount_required)) * 100;
 
+    // Updates the state
     const onChange = (e) => {
         if (e.target.type === "file" && e.target.name === "photos") {
             setFundraiserDetails((prevState) => {
@@ -91,19 +107,61 @@ function UserFundraiserEdit() {
             };
         });
     };
+
+    /**
+     * Submits the data in the form of form data.
+     */
+    const onSubmit = async (e) => {
+        e.preventDefault();
+
+        // Reset the form errors
+        setFormErrors({});
+
+        const apiUrl = `/fundraisers/${fundraiserSlug}/edit/`;
+
+        const formData = new FormData();
+
+        formData.append("name", fundraiserDetails.name);
+        formData.append("about", fundraiserDetails.about);
+        formData.append("details", fundraiserDetails.details);
+        formData.append("photos", fundraiserDetails.photos);
+
+        // Spreading the FileList into array prevents unexpected form data
+        for (const img in [...fundraiserDetails.other_photos]) {
+            formData.append("other_photos", fundraiserDetails.other_photos[img]);
+        }
+
+        try {
+            const response = await axios.post(apiUrl, formData);
+
+            if (response) {
+                toast.success("You've updated the fundraiser successfully.");
+                navigate(routes.home);
+            }
+        } catch (error) {
+            // Bad request
+            if (error?.response?.status === 400) {
+                toast.error("There are some errors in your form.");
+                setFormErrors(error.response?.data);
+            }
+        }
+    };
+
     return (
         <div className="mt-12">
             <div className="heading text-center text-gray-800 font-bold text-3xl uppercase m-6 lg:text-4xl">
                 <span className="border-b font-mono">Update Fundraiser</span>
             </div>
-            <div className="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl">
+            <form
+                className="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl"
+                onSubmit={onSubmit}>
                 <div>
                     <label htmlFor="name" className="inline-block text-xs text-white bg-gray-800 p-1 my-2">
                         Name
                     </label>
                     <span className="uk-margin-small-right" data-uk-icon="pencil"></span>
                     <input
-                        className="title block w-full bg-gray-100 border border-gray-300 p-2 mb-4 outline-none"
+                        className="title block w-full bg-gray-100 border border-gray-300 p-2 outline-none"
                         placeholder="Name"
                         type="text"
                         value={fundraiserDetails.name}
@@ -112,7 +170,15 @@ function UserFundraiserEdit() {
                         onChange={onChange}
                         max={120}
                         min={10}
+                        required
                     />
+                    {formErrors?.name?.map((error, idx) => {
+                        return (
+                            <span key={idx} className="text-xs text-red-900">
+                                *{error}
+                            </span>
+                        );
+                    })}
                 </div>
 
                 <div>
@@ -126,7 +192,15 @@ function UserFundraiserEdit() {
                         value={fundraiserDetails.about}
                         name="about"
                         id="about"
-                        onChange={onChange}></textarea>
+                        onChange={onChange}
+                        required></textarea>
+                    {formErrors?.about?.map((error, idx) => {
+                        return (
+                            <span key={idx} className="text-xs text-red-900">
+                                *{error}
+                            </span>
+                        );
+                    })}
                 </div>
 
                 <div className="mt-4">
@@ -140,7 +214,15 @@ function UserFundraiserEdit() {
                         value={fundraiserDetails.details}
                         name="details"
                         id="details"
-                        onChange={onChange}></textarea>
+                        onChange={onChange}
+                        required></textarea>
+                    {formErrors?.details?.map((error, idx) => {
+                        return (
+                            <span key={idx} className="text-xs text-red-900">
+                                *{error}
+                            </span>
+                        );
+                    })}
                 </div>
                 <hr className="m-4" />
 
@@ -157,6 +239,13 @@ function UserFundraiserEdit() {
                             className="block mt-4 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-gray-900 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60"
                             onChange={onChange}
                         />
+                        {formErrors?.photos?.map((error, idx) => {
+                            return (
+                                <span key={idx} className="text-xs text-red-900">
+                                    *{error}
+                                </span>
+                            );
+                        })}
                     </div>
 
                     <div className="my-4">
@@ -172,6 +261,13 @@ function UserFundraiserEdit() {
                             className="block mt-4 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-gray-900 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60"
                             onChange={onChange}
                         />
+                        {formErrors?.other_photos?.map((error, idx) => {
+                            return (
+                                <span key={idx} className="text-xs text-red-900">
+                                    *{error}
+                                </span>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -182,11 +278,13 @@ function UserFundraiserEdit() {
                     <div className="btn border border-gray-300 p-1 px-4 font-semibold cursor-pointer text-gray-500 ml-auto">
                         Cancel
                     </div>
-                    <div className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-white ml-2 bg-indigo-500">
+                    <button
+                        type="submit"
+                        className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-white ml-2 bg-indigo-500">
                         Update
-                    </div>
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 }

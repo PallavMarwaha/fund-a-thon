@@ -142,3 +142,18 @@ class FundraisersListSerializer(serializers.ModelSerializer):
             "end_date",
             "created_at",
         ]
+
+
+class FundraiserUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating the fundraiser info such as name, about, details and photos etc.
+    """
+
+    # TODO: Add field to model
+    other_photos = serializers.ListField(child=serializers.FileField(), required=False)
+
+    photos = serializers.FileField(required=False)
+
+    class Meta:
+        model = Fundraiser
+        fields = ["name", "about", "details", "photos", "other_photos"]
