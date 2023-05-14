@@ -6,6 +6,7 @@ from django.contrib.auth.password_validation import validate_password
 
 from dj_rest_auth.models import TokenModel
 from .models import College, Student
+from fundraisers.models import Fundraiser
 
 User = get_user_model()
 
@@ -87,3 +88,13 @@ class CollegeListSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.name}, {obj.city}, {obj.state}"
+
+
+class UserFundraisersListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for active user fundraisers.
+    """
+
+    class Meta:
+        model = Fundraiser
+        fields = ["name", "about", "details", "photos", "created_at"]

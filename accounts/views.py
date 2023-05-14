@@ -16,7 +16,12 @@ from rest_framework.authentication import (
 from django.contrib.auth import get_user_model
 
 from .models import College
-from .serializers import CollegeListSerializer, UserRegistrationSerializer
+from fundraisers.models import Fundraiser
+from .serializers import (
+    CollegeListSerializer,
+    UserRegistrationSerializer,
+    UserFundraisersListSerializer,
+)
 
 User = get_user_model()
 
@@ -72,4 +77,16 @@ def get_colleges_list(request):
     colleges = College.objects.all().order_by("name")
 
     serializer = CollegeListSerializer(colleges, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def user_fundraisers_list(request):
+    """
+    Returns list of active user fundraisers with is_deleted=False filter.
+    """
+    user_fundraisers_list = request.user.get_active_fundraisers()
+
+    serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
+
     return Response(serializer.data)

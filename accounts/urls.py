@@ -11,4 +11,9 @@ urlpatterns = [
     path("whoami/", views.whoami, name="whoami"),
     path("register/", views.register, name="register"),
     path("colleges/", views.get_colleges_list, name="get_colleges_list"),
+    path(
+        "dashboard/fundraisers/",
+        views.user_fundraisers_list,
+        name="user_fundraisers_list",
+    ),
 ]

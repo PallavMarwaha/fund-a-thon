@@ -111,6 +111,13 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    def get_active_fundraisers(self):
+        """
+        Gets all the active fundraisers of the user.
+        """
+        # FIXME: Add is_published field filter.
+        return self.fundraiser_set.filter(is_deleted=False)
+
 
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
