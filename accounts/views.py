@@ -97,6 +97,12 @@ def user_fundraisers_list(request):
             name__icontains=request.query_params.get("q")
         )
 
+    # Sort by filter
+    if "sort" in request.query_params and request.query_params.get("sort") is not None:
+        user_fundraisers_list = user_fundraisers_list.order_by(
+            request.query_params.get("sort")
+        )
+
     serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
 
     return Response(serializer.data)

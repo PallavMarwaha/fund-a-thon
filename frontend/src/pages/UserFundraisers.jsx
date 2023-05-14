@@ -19,19 +19,43 @@ const toggleViewOptions = [
     },
 ];
 
-const apiUrl = "/accounts/dashboard/fundraisers";
+const sortByOptions = [
+    {
+        label: "Name",
+        value: "name",
+    },
+    {
+        label: "Created At",
+        value: "created_at",
+    },
+    {
+        label: "Amount Raised",
+        value: "amount_raised",
+    },
+    {
+        label: "Amount Required",
+        value: "amount_required",
+    },
+];
 
 export default function UserFundraisers({ fetcher }) {
     const [currentView, setCurrentView] = useState({
         value: "grid",
         label: "Grid",
     });
+    const [sortBy, setSortBy] = useState({
+        label: "Name",
+        value: "name",
+    });
+
     const [fundraisersList, setFundraisersList] = useState([]);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 1000);
 
     const { data, error, isLoading } = useSWR(
-        !debouncedSearch ? "/accounts/dashboard/fundraisers" : `/accounts/dashboard/fundraisers/?q=${debouncedSearch}`,
+        !debouncedSearch
+            ? `/accounts/dashboard/fundraisers/?sort=${sortBy.value}`
+            : `/accounts/dashboard/fundraisers/?q=${debouncedSearch}&sort=${sortBy.value}`,
         fetcher
     );
 
@@ -42,6 +66,7 @@ export default function UserFundraisers({ fetcher }) {
         setFundraisersList(data);
     }, [data]);
 
+    // NOTE: This causes flickering while the search term is fetched
     // if (isLoading) {
     //     return <Loader />;
     // }
@@ -84,11 +109,14 @@ export default function UserFundraisers({ fetcher }) {
                                 placeholder="Toggle view"
                                 onChange={(action) => setCurrentView(action)}
                             />
-                            <Select className="ml-1" placeholder="Sort by" />
+                            <Select
+                                className="ml-1"
+                                placeholder="Sort by"
+                                options={sortByOptions}
+                                value={sortBy}
+                                onChange={(action) => setSortBy(action)}
+                            />
                         </div>
-                        {/* <button type="button" className="p-2 bg-blue-700 text-white hover:bg-blue-900 rounded">
-                            Toggle table
-                        </button> */}
                     </div>
                 </form>
             </div>
