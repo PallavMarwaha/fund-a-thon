@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models.functions import Lower
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import (
@@ -99,9 +100,8 @@ def user_fundraisers_list(request):
 
     # Sort by filter
     if "sort" in request.query_params and request.query_params.get("sort") is not None:
-        user_fundraisers_list = user_fundraisers_list.order_by(
-            request.query_params.get("sort")
-        )
+        sort_by = request.query_params.get("sort").lower()
+        user_fundraisers_list = user_fundraisers_list.order_by(Lower(sort_by))
 
     serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
 
