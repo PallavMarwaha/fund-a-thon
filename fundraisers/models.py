@@ -68,8 +68,16 @@ class Fundraiser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Fundraiser, self).__init__(*args, **kwargs)
+
+        # To only update the slug when the name changes in save method
+        # else it changes slug every time with random hex
+        self.old_name = self.name
+
     def save(self, *args, **kwargs):
-        self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        if self.old_name and not (self.old_name == self.name):
+            self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
         super(Fundraiser, self).save(*args, **kwargs)
 
     def __str__(self) -> str:

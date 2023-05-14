@@ -22,6 +22,7 @@ from .serializers import (
     CreateFundraiserSerializer,
     FundraiserDetailsSerializer,
     FundraisersListSerializer,
+    FundraiserUpdateSerializer,
 )
 from .models import Fundraiser
 
@@ -115,3 +116,35 @@ def featured_fundraisers(request):
     serializer = FundraisersListSerializer(result_page, many=True)
 
     return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(["GET", "POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@is_student_required
+def update_fundraiser(request, slug):
+    """
+    API endpoint to update a fundraiser.
+    """
+
+    try:
+        fundraiser_obj = Fundraiser.objects.get(slug=slug, user=request.user)
+    except Fundraiser.DoesNotExist:
+        return Response(
+            {"detail": "Fundraiser not found."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+        serializer = FundraiserDetailsSerializer(fundraiser_obj)
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+        serializer = FundraiserUpdateSerializer(
+            instance=fundraiser_obj, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
