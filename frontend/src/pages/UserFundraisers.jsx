@@ -3,10 +3,15 @@ import Select from "react-select";
 import UserFundraisersTable from "../components/UserFundraisersTable";
 import UserFundraisersGrid from "../components/UserFundraisersGrid";
 import { Loader } from "../components/Loader";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 import useSWR from "swr";
+import axios from "axios";
 import { toast } from "react-toastify";
 import useDebounce from "../hooks/useDebounce";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../routes";
 
 const toggleViewOptions = [
     {
@@ -59,6 +64,8 @@ export default function UserFundraisers({ fetcher }) {
         fetcher
     );
 
+    const navigate = useNavigate();
+
     // Adding the fetched data to the state
     useEffect(() => {
         if (!data) return;
@@ -74,6 +81,48 @@ export default function UserFundraisers({ fetcher }) {
     if (error) {
         toast.error("Something went wrong while fetching your fundraisers.");
     }
+
+    const deleteFundraiser = async (e, slug) => {
+        const apiUrl = `/fundraisers/${slug}/delete/`;
+        try {
+            const response = await axios.post(apiUrl);
+
+            toast.success("Fundraiser deleted successfully.");
+
+            // Filters the state to re-render the new list
+            setFundraisersList((prevState) => {
+                return prevState.filter((fundraiser) => {
+                    return fundraiser.slug !== slug;
+                });
+            });
+        } catch (error) {
+            if (error.response.status === 404) {
+                toast.error("You cannot delete this fundraiser. Please try again");
+                return;
+            }
+
+            toast.error("Something went wrong deleting this fundraiser.");
+        }
+    };
+
+    const onFundraiserDelete = (e, slug) => {
+        confirmAlert({
+            title: "Confirm delete",
+            message: "Are you sure you want to delete this fundraiser?",
+            buttons: [
+                {
+                    label: "Yes",
+                    onClick: () => deleteFundraiser(e, slug),
+                },
+                {
+                    label: "No",
+                    onClick: () => null,
+                },
+            ],
+            closeOnEscape: true,
+            closeOnClickOutside: true,
+        });
+    };
 
     return (
         <div className="mx-auto w-9/12">
@@ -122,7 +171,7 @@ export default function UserFundraisers({ fetcher }) {
             </div>
 
             {currentView.value === "table" ? (
-                <UserFundraisersTable data={fundraisersList} />
+                <UserFundraisersTable data={fundraisersList} onFundraiserDelete={onFundraiserDelete} />
             ) : (
                 <UserFundraisersGrid data={fundraisersList} />
             )}

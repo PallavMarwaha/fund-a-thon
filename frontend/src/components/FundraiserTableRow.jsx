@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { routes } from "../routes";
 
-function FundraiserTableRow({ name, created_at, amount_required, amount_raised }) {
+function FundraiserTableRow({ name, created_at, amount_required, amount_raised, slug, onFundraiserDelete }) {
     return (
         <tr>
             <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
@@ -10,21 +12,24 @@ function FundraiserTableRow({ name, created_at, amount_required, amount_raised }
             <td className="whitespace-nowrap px-4 py-2 text-gray-700">{amount_required}</td>
             <td className="whitespace-nowrap px-4 py-2 text-gray-700">{amount_raised}</td>
             <td className="whitespace-nowrap px-4 py-2">
-                <a
-                    href="#"
+                <Link
+                    to={`${routes.fundraisers.base}/${slug}`}
                     className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
                     View
-                </a>
-                <a
+                </Link>
+
+                {/* TODO: Implement un-publish option */}
+                {/* <a
                     href="#"
                     className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
                     Un-publish
-                </a>
-                <a
-                    href="#"
+                </a> */}
+                <button
+                    type="button"
+                    onClick={(e) => onFundraiserDelete(e, slug)}
                     className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
                     Delete
-                </a>
+                </button>
             </td>
         </tr>
     );

@@ -1,7 +1,7 @@
 import formatDates from "../utils/formatDates";
 import FundraiserTableRow from "./FundraiserTableRow";
 
-function UserFundraisersTable({ data }) {
+function UserFundraisersTable({ data, onFundraiserDelete }) {
     return (
         <div className="overflow-x-auto mt-4">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -28,6 +28,7 @@ function UserFundraisersTable({ data }) {
                                     created_at={formatDates(fundraiser.created_at)}
                                     amount_required={fundraiser.amount_required}
                                     amount_raised={fundraiser.amount_raised}
+                                    onFundraiserDelete={onFundraiserDelete}
                                 />
                             );
                         })
