@@ -87,6 +87,16 @@ def user_fundraisers_list(request):
     """
     user_fundraisers_list = request.user.get_active_fundraisers()
 
+    # Search filter
+    if (
+        "q" in request.query_params
+        and request.query_params.get("q") is not None
+        and request.query_params.get("q").strip() != ""
+    ):
+        user_fundraisers_list = user_fundraisers_list.filter(
+            name__icontains=request.query_params.get("q")
+        )
+
     serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
 
     return Response(serializer.data)

@@ -97,4 +97,13 @@ class UserFundraisersListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Fundraiser
-        fields = ["name", "about", "details", "photos", "created_at"]
+        fields = [
+            "name",
+            "slug",
+            "about",
+            "details",
+            "photos",
+            "created_at",
+            "amount_required",
+            "amount_raised",
+        ]
