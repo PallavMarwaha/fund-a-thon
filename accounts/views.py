@@ -22,7 +22,9 @@ from .serializers import (
     CollegeListSerializer,
     UserRegistrationSerializer,
     UserFundraisersListSerializer,
+    UserDashboardSerializer,
 )
+from fundraisers.decorators import is_student_required
 
 User = get_user_model()
 
@@ -104,5 +106,16 @@ def user_fundraisers_list(request):
         user_fundraisers_list = user_fundraisers_list.order_by(Lower(sort_by))
 
     serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@is_student_required
+def user_dashboard(request):
+    """
+    Returns user details such as name and their recent fundraisers info.
+    """
+    serializer = UserDashboardSerializer(request.user)
 
     return Response(serializer.data)

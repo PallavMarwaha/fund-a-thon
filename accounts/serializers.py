@@ -3,6 +3,7 @@ from rest_framework.validators import ValidationError
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.db.models import Sum
 
 from dj_rest_auth.models import TokenModel
 from .models import College, Student
@@ -107,3 +108,40 @@ class UserFundraisersListSerializer(serializers.ModelSerializer):
             "amount_required",
             "amount_raised",
         ]
+
+
+class UserDashboardSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user dashboard. Returns user fundraisers and total_funds_raised etc.
+    """
+
+    recent_fundraisers = serializers.SerializerMethodField()
+    total_funds_raised = serializers.SerializerMethodField()
+    total_fundraisers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "recent_fundraisers",
+            "total_funds_raised",
+            "total_fundraisers",
+        ]
+
+    def get_recent_fundraisers(self, obj):
+        recent_fundraisers = obj.get_active_fundraisers().order_by("-created_at")[:10]
+        serializer = UserFundraisersListSerializer(recent_fundraisers, many=True)
+        return serializer.data
+
+    def get_total_fundraisers(self, obj):
+        return obj.get_active_fundraisers().count()
+
+    def get_total_funds_raised(self, obj):
+        return (
+            obj.get_active_fundraisers()
+            .aggregate(total_amount_raised=Sum("amount_raised"))
+            .get("total_amount_raised", 0)
+        )
