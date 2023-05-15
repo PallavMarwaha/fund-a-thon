@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models.functions import Lower
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import (
@@ -16,7 +17,12 @@ from rest_framework.authentication import (
 from django.contrib.auth import get_user_model
 
 from .models import College
-from .serializers import CollegeListSerializer, UserRegistrationSerializer
+from fundraisers.models import Fundraiser
+from .serializers import (
+    CollegeListSerializer,
+    UserRegistrationSerializer,
+    UserFundraisersListSerializer,
+)
 
 User = get_user_model()
 
@@ -72,4 +78,31 @@ def get_colleges_list(request):
     colleges = College.objects.all().order_by("name")
 
     serializer = CollegeListSerializer(colleges, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def user_fundraisers_list(request):
+    """
+    Returns list of active user fundraisers with is_deleted=False filter.
+    """
+    user_fundraisers_list = request.user.get_active_fundraisers()
+
+    # Search filter
+    if (
+        "q" in request.query_params
+        and request.query_params.get("q") is not None
+        and request.query_params.get("q").strip() != ""
+    ):
+        user_fundraisers_list = user_fundraisers_list.filter(
+            name__icontains=request.query_params.get("q")
+        )
+
+    # Sort by filter
+    if "sort" in request.query_params and request.query_params.get("sort") is not None:
+        sort_by = request.query_params.get("sort").lower()
+        user_fundraisers_list = user_fundraisers_list.order_by(Lower(sort_by))
+
+    serializer = UserFundraisersListSerializer(user_fundraisers_list, many=True)
+
     return Response(serializer.data)

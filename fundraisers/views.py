@@ -148,3 +148,24 @@ def update_fundraiser(request, slug):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@is_student_required
+def delete_fundraiser(request, slug):
+    """
+    API endpoint to update a fundraiser.
+    """
+
+    try:
+        fundraiser_obj = Fundraiser.objects.get(slug=slug, user=request.user)
+    except Fundraiser.DoesNotExist:
+        return Response(
+            {"detail": "Fundraiser not found."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    fundraiser_obj.is_deleted = True
+    fundraiser_obj.save()
+
+    return Response({"detail": "Fundraiser deleted successfully"})

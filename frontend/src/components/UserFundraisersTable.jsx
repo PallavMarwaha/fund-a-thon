@@ -1,4 +1,7 @@
-function UserFundraisersTable() {
+import formatDates from "../utils/formatDates";
+import FundraiserTableRow from "./FundraiserTableRow";
+
+function UserFundraisersTable({ data, onFundraiserDelete }) {
     return (
         <div className="overflow-x-auto mt-4">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -13,81 +16,23 @@ function UserFundraisersTable() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                    <tr>
-                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                            <div className="overflow-hidden w-52">Robot fundraiser</div>
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">24/05/2023</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2">
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                View
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Un-publish
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                            <div className="overflow-hidden w-52">Robot fundraiser</div>
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">24/05/2023</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2">
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                View
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Un-publish
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                            <div className="overflow-hidden w-52">Robot fundraiser</div>
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">24/05/2023</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-                        <td className="whitespace-nowrap px-4 py-2">
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                View
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Un-publish
-                            </a>
-                            <a
-                                href="#"
-                                className="inline-block rounded bg-indigo-600 px-4 py-2 ml-2 text-xs font-medium text-white hover:bg-indigo-700">
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
+                    {data && data.length === 0 ? (
+                        <span className="text-xl font-bold text-center">You don't seem to have any fundraisers</span>
+                    ) : (
+                        data.map((fundraiser) => {
+                            return (
+                                <FundraiserTableRow
+                                    key={fundraiser.slug}
+                                    slug={fundraiser.slug}
+                                    name={fundraiser.name}
+                                    created_at={formatDates(fundraiser.created_at)}
+                                    amount_required={fundraiser.amount_required}
+                                    amount_raised={fundraiser.amount_raised}
+                                    onFundraiserDelete={onFundraiserDelete}
+                                />
+                            );
+                        })
+                    )}
                 </tbody>
             </table>
         </div>

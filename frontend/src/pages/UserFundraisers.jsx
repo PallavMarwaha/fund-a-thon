@@ -1,7 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import UserFundraisersTable from "../components/UserFundraisersTable";
 import UserFundraisersGrid from "../components/UserFundraisersGrid";
+import { Loader } from "../components/Loader";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
+
+import useSWR from "swr";
+import axios from "axios";
+import { toast } from "react-toastify";
+import useDebounce from "../hooks/useDebounce";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../routes";
 
 const toggleViewOptions = [
     {
@@ -14,11 +24,105 @@ const toggleViewOptions = [
     },
 ];
 
-export default function UserFundraisers() {
+const sortByOptions = [
+    {
+        label: "Name",
+        value: "name",
+    },
+    {
+        label: "Created At",
+        value: "created_at",
+    },
+    {
+        label: "Amount Raised",
+        value: "amount_raised",
+    },
+    {
+        label: "Amount Required",
+        value: "amount_required",
+    },
+];
+
+export default function UserFundraisers({ fetcher }) {
     const [currentView, setCurrentView] = useState({
         value: "grid",
         label: "Grid",
     });
+    const [sortBy, setSortBy] = useState({
+        label: "Name",
+        value: "name",
+    });
+
+    const [fundraisersList, setFundraisersList] = useState([]);
+    const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 1000);
+
+    const { data, error, isLoading } = useSWR(
+        !debouncedSearch
+            ? `/accounts/dashboard/fundraisers/?sort=${sortBy.value}`
+            : `/accounts/dashboard/fundraisers/?q=${debouncedSearch}&sort=${sortBy.value}`,
+        fetcher
+    );
+
+    const navigate = useNavigate();
+
+    // Adding the fetched data to the state
+    useEffect(() => {
+        if (!data) return;
+
+        setFundraisersList(data);
+    }, [data]);
+
+    // NOTE: This causes flickering while the search term is fetched
+    // if (isLoading) {
+    //     return <Loader />;
+    // }
+
+    if (error) {
+        toast.error("Something went wrong while fetching your fundraisers.");
+    }
+
+    const deleteFundraiser = async (e, slug) => {
+        const apiUrl = `/fundraisers/${slug}/delete/`;
+        try {
+            const response = await axios.post(apiUrl);
+
+            toast.success("Fundraiser deleted successfully.");
+
+            // Filters the state to re-render the new list
+            setFundraisersList((prevState) => {
+                return prevState.filter((fundraiser) => {
+                    return fundraiser.slug !== slug;
+                });
+            });
+        } catch (error) {
+            if (error.response.status === 404) {
+                toast.error("You cannot delete this fundraiser. Please try again");
+                return;
+            }
+
+            toast.error("Something went wrong deleting this fundraiser.");
+        }
+    };
+
+    const onFundraiserDelete = (e, slug) => {
+        confirmAlert({
+            title: "Confirm delete",
+            message: "Are you sure you want to delete this fundraiser?",
+            buttons: [
+                {
+                    label: "Yes",
+                    onClick: () => deleteFundraiser(e, slug),
+                },
+                {
+                    label: "No",
+                    onClick: () => null,
+                },
+            ],
+            closeOnEscape: true,
+            closeOnClickOutside: true,
+        });
+    };
 
     return (
         <div className="mx-auto w-9/12">
@@ -42,6 +146,8 @@ export default function UserFundraisers() {
                                 type="text"
                                 aria-label="Clickable icon"
                                 placeholder="Search..."
+                                onChange={(e) => setSearch(e.target.value)}
+                                value={search}
                             />
                         </div>
                         <div className="mt-2 md:mt-0 ml-auto flex">
@@ -52,16 +158,23 @@ export default function UserFundraisers() {
                                 placeholder="Toggle view"
                                 onChange={(action) => setCurrentView(action)}
                             />
-                            <Select className="ml-1" placeholder="Sort by" />
+                            <Select
+                                className="ml-1"
+                                placeholder="Sort by"
+                                options={sortByOptions}
+                                value={sortBy}
+                                onChange={(action) => setSortBy(action)}
+                            />
                         </div>
-                        {/* <button type="button" className="p-2 bg-blue-700 text-white hover:bg-blue-900 rounded">
-                            Toggle table
-                        </button> */}
                     </div>
                 </form>
             </div>
 
-            {currentView.value === "table" ? <UserFundraisersTable /> : <UserFundraisersGrid />}
+            {currentView.value === "table" ? (
+                <UserFundraisersTable data={fundraisersList} onFundraiserDelete={onFundraiserDelete} />
+            ) : (
+                <UserFundraisersGrid data={fundraisersList} />
+            )}
         </div>
     );
 }
