@@ -16,4 +16,5 @@ urlpatterns = [
         views.user_fundraisers_list,
         name="user_fundraisers_list",
     ),
+    path("dashboard/", views.user_dashboard, name="user_dashboard"),
 ]
