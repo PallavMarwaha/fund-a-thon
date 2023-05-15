@@ -25,13 +25,12 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import UserSettings from "./pages/UserSettings";
 import UserFundraiserEdit from "./pages/UserFundraiserEdit";
+import fetcher from "./utils/fetcher";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
 axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
 axios.defaults.headers.get["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
-
-const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 function App() {
     //https://github.com/react-auth-kit/react-auth-kit/issues/1023
