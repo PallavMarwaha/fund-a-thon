@@ -119,7 +119,7 @@ def user_fundraisers_list(request):
 
 
 @api_view(["GET"])
-@is_student_required
+# @is_student_required
 def user_dashboard(request):
     """
     Returns user details such as name and their recent fundraisers info.
