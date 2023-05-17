@@ -40,7 +40,14 @@ export function Navbar() {
                 {/* Authenticated */}
                 {isAuthenticated() && (
                     <div className="flex items-center font-bold !no-underline !text-white pr-6">
-                        <Link to={routes.account.dashboard.base}>Hello, {userAuthDetails().first_name}</Link>
+                        <Link
+                            to={
+                                userAuthDetails()?.is_student
+                                    ? routes.account.dashboard.base
+                                    : "/account/dashboard/settings"
+                            }>
+                            Hello, {userAuthDetails().first_name}
+                        </Link>
                         <a
                             className="ml-8 p-2 rounded-md hover:bg-blue-600"
                             onClick={(e) => {
