@@ -7,8 +7,6 @@ export function Navbar() {
     const isAuthenticated = useIsAuthenticated();
     const signOut = useSignOut();
 
-    const { is_student } = userAuthDetails();
-
     return (
         <nav className="w-full py-4 bg-blue-800 shadow">
             <div className="w-full container mx-auto flex flex-wrap items-center justify-between">
@@ -42,7 +40,12 @@ export function Navbar() {
                 {/* Authenticated */}
                 {isAuthenticated() && (
                     <div className="flex items-center font-bold !no-underline !text-white pr-6">
-                        <Link to={is_student ? routes.account.dashboard.base : "/account/dashboard/settings"}>
+                        <Link
+                            to={
+                                userAuthDetails()?.is_student
+                                    ? routes.account.dashboard.base
+                                    : "/account/dashboard/settings"
+                            }>
                             Hello, {userAuthDetails().first_name}
                         </Link>
                         <a
