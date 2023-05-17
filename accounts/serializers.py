@@ -15,7 +15,7 @@ User = get_user_model()
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "username")
+        fields = ("first_name", "last_name", "username", "is_student")
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
@@ -145,3 +145,45 @@ class UserDashboardSerializer(serializers.ModelSerializer):
             .aggregate(total_amount_raised=Sum("amount_raised"))
             .get("total_amount_raised", 0)
         )
+
+
+class UserProfileUpdateSerializer(serializers.Serializer):
+    """
+    Serializer for updating user settings. Not used for updating, just deserializing.
+    """
+
+    first_name = serializers.CharField(required=False, max_length=120, allow_blank=True)
+    last_name = serializers.CharField(required=False, max_length=120, allow_blank=True)
+    username = serializers.CharField(required=False, max_length=120, allow_blank=True)
+    password1 = serializers.CharField(
+        required=False,
+        validators=[validate_password],
+        max_length=120,
+        allow_blank=True,
+    )
+    password2 = serializers.CharField(
+        required=False,
+        validators=[validate_password],
+        max_length=120,
+        allow_blank=True,
+    )
+    password = serializers.SerializerMethodField()
+
+    class Meta:
+        extra_kwargs = {
+            "password1": {"write_only": True},
+            "password2": {"write_only": True},
+            "password2": {"write_only": True},
+        }
+
+    def validate(self, attrs):
+        password1 = attrs.get("password1")
+        password2 = attrs.get("password2")
+
+        if (password1 and password2) and password1 != password2:
+            raise serializers.ValidationError({"password": ["Passwords do not match"]})
+
+        return attrs
+
+    def get_password(self, obj):
+        return obj.get("password1", "")

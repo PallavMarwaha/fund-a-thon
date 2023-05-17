@@ -23,6 +23,7 @@ from .serializers import (
     UserRegistrationSerializer,
     UserFundraisersListSerializer,
     UserDashboardSerializer,
+    UserProfileUpdateSerializer,
 )
 from fundraisers.decorators import is_student_required
 
@@ -34,7 +35,14 @@ User = get_user_model()
 @permission_classes([AllowAny])
 def whoami(request):
     if request.user.is_authenticated:
-        return Response({"is_authenticated": True, "username": request.user.username})
+        return Response(
+            {
+                "is_authenticated": True,
+                "username": request.user.username,
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+            }
+        )
 
     return Response({"is_authenticated": False})
 
@@ -119,3 +127,33 @@ def user_dashboard(request):
     serializer = UserDashboardSerializer(request.user)
 
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+def update_profile(request):
+    """
+    API endpoint for user registration.
+    """
+    serializer = UserProfileUpdateSerializer(data=request.data)
+
+    if serializer.is_valid():
+        fields_to_update_list = {}
+        for key, value in serializer.data.items():
+            if value is not None and value.strip() != "":
+                fields_to_update_list[key] = value
+
+        user_obj = User.objects.filter(id=request.user.id).update(
+            **fields_to_update_list
+        )
+
+        updated_user_obj = User.objects.get(id=request.user.id)
+
+        return Response(
+            {
+                "first_name": updated_user_obj.first_name,
+                "last_name": updated_user_obj.last_name,
+                "username": updated_user_obj.username,
+            }
+        )
+    else:
+        return Response(serializer.errors)

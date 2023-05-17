@@ -1,5 +1,13 @@
+import useSWR from "swr";
 import { useState } from "react";
 import { useAuthUser } from "react-auth-kit";
+import axios from "axios";
+import fetcher from "../utils/fetcher";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../routes";
+import { Loader } from "../components/Loader";
 
 function UserSettings() {
     const [userInfo, setUserInfo] = useState({
@@ -12,8 +20,25 @@ function UserSettings() {
 
     const [errors, setErrors] = useState({});
 
-    const auth = useAuthUser();
-    const { first_name, last_name, username } = auth();
+    const { data, isLoading, error } = useSWR("/accounts/whoami/", fetcher);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (error) {
+            toast.error("Something went wrong while fetching your info.");
+            navigate(routes.home);
+        }
+    }, [error, navigate]);
+
+    if (isLoading) {
+        return <Loader />;
+    }
+
+    const { first_name, last_name, username } = data;
+
+    // Empty values validation
+    const isFormEmpty = Object.values(userInfo).every((x) => x === null || x === "");
 
     const onChange = (e) => {
         setUserInfo((prevState) => {
@@ -24,19 +49,40 @@ function UserSettings() {
         });
     };
 
+    /**
+     * Submits the data to the backend server
+     */
+    const submitUserInfoToServer = async () => {
+        const apiUrl = "accounts/dashboard/settings/";
+
+        try {
+            const response = await axios.post(apiUrl, userInfo);
+            toast.success("Your profile has been updated!");
+            navigate(0);
+        } catch (error) {
+            toast.error("Something went wrong while fetching your info.");
+            navigate(0);
+        }
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
+
+        setErrors({});
 
         // Client side validation
 
         // Username
-        if (userInfo.username.length > 0 && userInfo.username.length < 5)
+        if (userInfo.username.length > 0 && userInfo.username.length < 5) {
             setErrors((prevState) => {
                 return {
                     ...prevState,
                     username: ["Your username must be longer than 5 letters"],
                 };
             });
+
+            return;
+        }
 
         // Passwords
         if (userInfo.password1 !== userInfo.password2) {
@@ -46,7 +92,15 @@ function UserSettings() {
                     password: ["Check your passwords again"],
                 };
             });
+
+            return;
         }
+
+        if (isFormEmpty) {
+            return;
+        }
+
+        submitUserInfoToServer();
     };
 
     return (
@@ -199,13 +253,15 @@ function UserSettings() {
                     </div>
                 </div>
 
-                <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4 inherit">
-                        Submit
-                    </button>
-                </div>
+                {!isFormEmpty && (
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4 inherit">
+                            Submit
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
