@@ -107,10 +107,10 @@ function UserSettings() {
         <div className="px-4 container mx-auto lg:w-6/12 flex justify-center items-center min-h-screen">
             <form className="w-full max-w-lg" onSubmit={onSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="flex justify-center m-4">
+                    <div className="flex justify-center m-4 w-full">
                         <img
                             className="object-cover object-center h-full w-7/12 md:w-4/12 rounded-full"
-                            src="https://i.pravatar.cc/600"
+                            src="https://xsgames.co/randomusers/avatar.php?g=pixel"
                             alt="stats"
                             height={300}
                             width={300}

@@ -38,7 +38,7 @@ export default function UserProfile() {
                     <div className="md:w-1/3 w-full rounded-lg overflow-hidden mt-6 sm:mt-0 mr-4">
                         <img
                             className="object-cover object-center w-full h-full min-w-full"
-                            src="https://i.pravatar.cc/600"
+                            src="https://xsgames.co/randomusers/avatar.php?g=pixel"
                             alt="stats"
                             height={600}
                             width={300}
