@@ -148,7 +148,7 @@ export function FundraiserDetail() {
             <section className="w-full md:w-2/3 flex flex-col items-center px-3 mx-auto">
                 <article className="flex flex-col shadow my-4">
                     <a href="#" className="hover:opacity-75">
-                        <img src={fundraiserDetails?.photos} width={1000} height={500} />
+                        <img src={"http://127.0.0.1:8000" + fundraiserDetails?.photos} width={1000} height={500} />
                     </a>
                     <div className="bg-white flex flex-col justify-start p-6">
                         <p href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
