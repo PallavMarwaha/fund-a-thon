@@ -90,6 +90,7 @@ export default function UserProfile() {
                                       about={fundraiser.about}
                                       details={fundraiser.details}
                                       slug={fundraiser.slug}
+                                      photos={fundraiser.photos}
                                       created_at={formatDates(fundraiser.created_at)}
                                   />
                               );
