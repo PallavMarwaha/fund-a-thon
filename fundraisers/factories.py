@@ -3,6 +3,8 @@ import factory
 from faker import Faker
 from datetime import datetime, timedelta
 
+from django.conf import settings
+
 from django.contrib.auth import get_user_model
 
 from .models import Fundraiser, FundraiserComment, FundraiserLike
@@ -13,6 +15,30 @@ fake = Faker()
 
 user_ids = list(User.objects.filter(is_student=True).values_list("id", flat=True))
 fundraiser_ids = list(Fundraiser.objects.values_list("id", flat=True))
+
+# random_photo = random.choice(
+#     [
+#         "0416-em-pick-your-project-goose-1.png",
+#         "243274_The-Ultimate-List-Of-Engineering-Projects-opt-2_061418.png",
+#         "dziekan-cpr.jpg",
+#         "image.imageformat.1286.871497668.jpg",
+#         "projects.png",
+#         "test1.jpg",
+#     ]
+# )
+
+
+def random_photo():
+    return random.choice(
+        [
+            "0416-em-pick-your-project-goose-1.png",
+            "243274_The-Ultimate-List-Of-Engineering-Projects-opt-2_061418.png",
+            "dziekan-cpr.jpg",
+            "image.imageformat.1286.871497668.jpg",
+            "projects.png",
+            "test1.jpg",
+        ]
+    )
 
 
 class FundraiserFactory(factory.django.DjangoModelFactory):
@@ -51,7 +77,17 @@ class FundraiserFactory(factory.django.DjangoModelFactory):
         date_start=datetime.now(),
         date_end=datetime.now() + timedelta(days=30),
     )
-    photos = factory.django.FileField(filename="the_file.jpg")
+    photos = factory.django.FileField(
+        filename="the_file.jpg",
+        from_path=f"""{settings.BASE_DIR}/static/images/test/{random.choice([
+        "0416-em-pick-your-project-goose-1.png",
+        "243274_The-Ultimate-List-Of-Engineering-Projects-opt-2_061418.png",
+        "dziekan-cpr.jpg",
+        "image.imageformat.1286.871497668.jpg",
+        "projects.png",
+        "test1.jpg",
+    ])}""",
+    )
 
     @factory.lazy_attribute
     def details(self):

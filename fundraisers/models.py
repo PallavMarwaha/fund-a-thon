@@ -76,8 +76,12 @@ class Fundraiser(models.Model):
         self.old_name = self.name
 
     def save(self, *args, **kwargs):
-        if self.old_name and not (self.old_name == self.name):
-            self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        # if self.old_name and not (self.old_name == self.name):
+        #     self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        # else:
+        #     self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        if self._state.adding or self.name != self.old_name:
+            self.slug = slugify(f"{self.name} {secrets.token_hex(5)}")
         super(Fundraiser, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
