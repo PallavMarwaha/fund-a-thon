@@ -158,6 +158,7 @@ export function FundraiserDetail() {
 
             console.log(response);
             toast.success("Comment posted successfully!");
+            setUserComment("");
         } catch (error) {
             console.log(error);
             toast.error("Something went wrong while submitting your comment.");
