@@ -67,7 +67,7 @@ def fundraiser_details(request, slug):
     Returns fundraiser details including user details or 404 if not available.
     """
     try:
-        fundraiser_obj = Fundraiser.objects.get(slug=slug)
+        fundraiser_obj = Fundraiser.objects.get(slug=slug, is_deleted=False)
     except Fundraiser.DoesNotExist:
         return Response(
             {"detail": "Fundraiser not found"},
@@ -87,7 +87,7 @@ def fundraisers_list(request):
     """
     paginator = CustomPagination()
     paginator.page_size = 12
-    fundraisers = Fundraiser.objects.all().order_by("name")
+    fundraisers = Fundraiser.objects.filter(is_deleted=False).order_by("name")
 
     result_page = paginator.paginate_queryset(fundraisers, request)
 
@@ -104,7 +104,7 @@ def featured_fundraisers(request):
     """
 
     fundraisers = (
-        Fundraiser.objects.filter()
+        Fundraiser.objects.filter(is_deleted=False)
         .annotate(total_likes=Count("fundraiserlike"))
         .order_by("-total_likes")
     )[:9]
@@ -127,7 +127,9 @@ def update_fundraiser(request, slug):
     """
 
     try:
-        fundraiser_obj = Fundraiser.objects.get(slug=slug, user=request.user)
+        fundraiser_obj = Fundraiser.objects.get(
+            slug=slug, user=request.user, is_deleted=False
+        )
     except Fundraiser.DoesNotExist:
         return Response(
             {"detail": "Fundraiser not found."}, status=status.HTTP_404_NOT_FOUND
