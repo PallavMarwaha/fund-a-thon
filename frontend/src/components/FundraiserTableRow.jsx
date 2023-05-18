@@ -17,6 +17,11 @@ function FundraiserTableRow({ name, created_at, amount_required, amount_raised, 
                     className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
                     View
                 </Link>
+                <Link
+                    to={`${routes.fundraisers.base}/${slug}/edit`}
+                    className="inline-block rounded bg-indigo-600 px-4 py-2 ml-1 text-xs font-medium text-white hover:bg-indigo-700">
+                    Edit
+                </Link>
 
                 {/* TODO: Implement un-publish option */}
                 {/* <a
