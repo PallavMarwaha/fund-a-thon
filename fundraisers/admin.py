@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Fundraiser, Donation, FundraiserLike, FundraiserComment
+from .models import Fundraiser, Donation, FundraiserLike, FundraiserComment, Order
 
 # Register your models here.
 
@@ -13,3 +13,4 @@ admin.site.register(Fundraiser, FunraiserAdmin)
 admin.site.register(Donation)
 admin.site.register(FundraiserLike)
 admin.site.register(FundraiserComment)
+admin.site.register(Order)

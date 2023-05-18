@@ -4,6 +4,9 @@ from djmoney.contrib.django_rest_framework import MoneyField
 from djmoney.models.validators import MaxMoneyValidator, MinMoneyValidator
 from django.contrib.auth import get_user_model
 
+from django.db.models import Sum, IntegerField
+from django.db.models.functions import Coalesce
+
 from .models import Fundraiser, FundraiserComment
 
 User = get_user_model()
@@ -103,6 +106,7 @@ class FundraiserDetailsSerializer(serializers.ModelSerializer):
 
     user = FundraiserUserDetailsSerializer()
     comments = FundraiserCommentSerializer(many=True, source="fundraisercomment_set")
+    amount_raised = serializers.SerializerMethodField()
 
     class Meta:
         model = Fundraiser
@@ -120,6 +124,11 @@ class FundraiserDetailsSerializer(serializers.ModelSerializer):
             "end_date",
             "created_at",
         ]
+
+    def get_amount_raised(self, obj):
+        return obj.donation_set.aggregate(
+            amount_raised=Coalesce(Sum("amount_paid"), 0, output_field=IntegerField())
+        ).get("amount_raised", 0)
 
 
 class FundraisersListSerializer(serializers.ModelSerializer):

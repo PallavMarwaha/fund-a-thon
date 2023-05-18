@@ -86,16 +86,25 @@ class Fundraiser(models.Model):
 
 class Donation(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)  # Who paid the donation
+    # user = models.ForeignKey(User, on_delete=models.RESTRICT)  # Who paid the donation
     fundraiser = models.ForeignKey(Fundraiser, on_delete=models.RESTRICT)
     amount_paid = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
     paid_at = models.DateTimeField(auto_now_add=True)
     payment_info = models.JSONField()
+    payment_status = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.fundraiser} - {self.user.get_full_name()} - {self.amount_paid}"
+        return f"{self.fundraiser} - {self.amount_paid}"
+
+
+class Order(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    fundraiser = models.ForeignKey(Fundraiser, on_delete=models.RESTRICT)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    amount_paid = MoneyField(decimal_places=2, max_digits=5, default_currency="INR")
 
 
 class FundraiserLike(models.Model):
