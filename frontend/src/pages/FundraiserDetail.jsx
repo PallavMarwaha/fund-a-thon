@@ -6,12 +6,14 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { Loader } from "../components/Loader";
 import FundraiserComment from "../components/FundraiserComment";
+import useRazorpay from "react-razorpay";
 
 export function FundraiserDetail() {
     const [fundraiserDetails, setFundraiserDetails] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
+    const Razorpay = useRazorpay();
 
     const startDate = dayjs(fundraiserDetails?.start_date).format("DD MMMM, YYYY");
     const endDate = dayjs(fundraiserDetails?.end_date).format("DD MMMM, YYYY");
@@ -20,6 +22,24 @@ export function FundraiserDetail() {
         (parseInt(fundraiserDetails.amount_raised) / parseInt(fundraiserDetails.amount_required)) * 100;
 
     const routeParams = useParams();
+
+    useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+
+        return;
+        const rzpPaymentForm = document.getElementById("razorpay");
+
+        if (!rzpPaymentForm.hasChildNodes()) {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/payment-button.js";
+            script.async = true;
+            script.dataset.payment_button_id = "pl_LnEqJqEV1hZ89E";
+            script.dataset.slug = fundraiserDetails.slug;
+            rzpPaymentForm.appendChild(script);
+        }
+    }, [isLoading]);
 
     // To check if the fundraiser exists on page load
     useEffect(() => {
@@ -55,6 +75,73 @@ export function FundraiserDetail() {
     if (isLoading) {
         return <Loader />;
     }
+
+    const createOrder = async (params) => {
+        const apiUrl = "/fundraisers/create-order/";
+
+        try {
+            const response = await axios.post(apiUrl, {
+                slug: fundraiserDetails.slug,
+            });
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleSuccessfulPayment = async (data) => {
+        const apiUrl = "/fundraisers/callback-success/";
+
+        try {
+            const response = await axios.post(apiUrl, data);
+            console.log(response);
+            toast.success("Yohoo! You've successfully donated to this fundraiser.");
+        } catch (error) {
+            console.log(error);
+            toast.error("Oops! Seems likes something went wrong with the payment. Please try again later.");
+        }
+    };
+
+    // NOTE: This is only for testing purposes. DO NOT USE THIS IN PRODUCTION.
+    const handlePayment = async (params) => {
+        const order = await createOrder(params); //  Create order on your backend
+
+        if (!order) return;
+
+        const options = {
+            key: "rzp_test_8qS1n6oZ6eUxcS", // Enter the Key ID generated from the Dashboard
+            amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            currency: "INR",
+            name: "Fund-a-thon",
+            description: "Test Transaction",
+            image: "https://example.com/your_logo",
+            order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of createOrder().
+            handler: function (response) {
+                handleSuccessfulPayment({ ...response, slug: fundraiserDetails?.slug, order_id: order.receipt });
+            },
+            prefill: {
+                name: "Piyush Garg",
+                email: "youremail@example.com",
+                contact: "9999999999",
+            },
+            notes: {
+                address: "Razorpay Corporate Office",
+                slug: fundraiserDetails.slug,
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const rzp1 = new Razorpay(options);
+
+        rzp1.on("payment.failed", function (response) {
+            toast.error("Oops! Seems likes something went wrong with the payment. Please try again later.");
+        });
+
+        rzp1.open();
+    };
 
     return (
         <div className="md:container mx-auto flex flex-wrap py-6">
@@ -147,6 +234,12 @@ export function FundraiserDetail() {
                             </div>
                         </div>
                     </div>
+                    <button
+                        onClick={handlePayment}
+                        className="bg-blue-700 text-white font-bold rounded hover:bg-blue-500 p-2 m-2 w-1/4 mx-auto">
+                        Donate Rs.200
+                    </button>
+                    <form id="razorpay"></form>
                 </article>
 
                 <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
