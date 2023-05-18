@@ -132,7 +132,7 @@ class FundraiserComment(models.Model):
     fundraiser = models.ForeignKey(Fundraiser, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(help_text="User's comment on the fundraiser")
-    commented_at = models.DateTimeField()
+    # commented_at = models.DateTimeField()
     is_deleted = models.BooleanField(default=False, help_text="Used for soft delete")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)

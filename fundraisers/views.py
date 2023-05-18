@@ -24,7 +24,7 @@ from .serializers import (
     FundraisersListSerializer,
     FundraiserUpdateSerializer,
 )
-from .models import Fundraiser
+from .models import Fundraiser, FundraiserComment
 
 
 class CustomPagination(PageNumberPagination):
@@ -169,3 +169,27 @@ def delete_fundraiser(request, slug):
     fundraiser_obj.save()
 
     return Response({"detail": "Fundraiser deleted successfully"})
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+def comments(request, slug):
+    try:
+        fundraiser_obj = Fundraiser.objects.get(slug=slug)
+    except Fundraiser.DoesNotExist:
+        return Response(
+            {"detail": "Fundraiser not found."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    comment = request.data.get("comment")
+
+    if comment is None or comment.strip() == "":
+        return Response(
+            {"detail": "Invalid comment"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    fc_obj = FundraiserComment.objects.create(
+        fundraiser=fundraiser_obj, user=request.user, text=comment
+    )
+
+    return Response()
