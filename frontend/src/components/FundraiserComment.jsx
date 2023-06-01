@@ -1,16 +1,14 @@
-export default function FundraiserComment({ user, text, created_at }) {
+export default function FundraiserComment({ user, text, created_at, img }) {
+    const getRandomImg = () => {
+        return `https://xsgames.co/randomusers/assets/avatars/pixel/${Math.floor(Math.random() * 50) + 1}.jpg`;
+    };
+
     return (
         <article className="uk-comment bg-gray-50 p-4" role="comment">
             <header className="uk-comment-header">
                 <div className="uk-grid-medium uk-flex-middle flex">
                     <div className="uk-width-auto">
-                        <img
-                            className="uk-comment-avatar"
-                            src="https://xsgames.co/randomusers/avatar.php?g=pixel"
-                            width="80"
-                            height="80"
-                            alt=""
-                        />
+                        <img className="uk-comment-avatar" src={getRandomImg()} width="80" height="80" alt="" />
                     </div>
                     <div className="uk-width-expand">
                         <h4 className="uk-comment-title uk-margin-remove">

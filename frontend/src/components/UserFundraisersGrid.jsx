@@ -16,6 +16,7 @@ function UserFundraisersGrid({ data }) {
                             created_at={formatDates(fundraiser.created_at)}
                             slug={fundraiser.slug}
                             key={fundraiser.slug}
+                            photos={fundraiser.photos}
                         />
                     );
                 })

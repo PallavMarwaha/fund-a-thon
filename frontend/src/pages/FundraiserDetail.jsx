@@ -7,13 +7,18 @@ import dayjs from "dayjs";
 import { Loader } from "../components/Loader";
 import FundraiserComment from "../components/FundraiserComment";
 import useRazorpay from "react-razorpay";
+import CommentBox from "../components/CommentBox";
+import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 
 export function FundraiserDetail() {
     const [fundraiserDetails, setFundraiserDetails] = useState({});
+    const [userComment, setUserComment] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
     const Razorpay = useRazorpay();
+
+    const isAuthenticated = useIsAuthenticated();
 
     const startDate = dayjs(fundraiserDetails?.start_date).format("DD MMMM, YYYY");
     const endDate = dayjs(fundraiserDetails?.end_date).format("DD MMMM, YYYY");
@@ -143,16 +148,29 @@ export function FundraiserDetail() {
         rzp1.open();
     };
 
+    const onCommentSubmit = async (e) => {
+        e.preventDefault();
+
+        const apiUrl = `/fundraisers/${fundraiserDetails?.slug}/comments/`;
+
+        try {
+            const response = await axios.post(apiUrl, { comment: userComment });
+
+            console.log(response);
+            toast.success("Comment posted successfully!");
+            setUserComment("");
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong while submitting your comment.");
+        }
+    };
+
     return (
         <div className="md:container mx-auto flex flex-wrap py-6">
             <section className="w-full md:w-2/3 flex flex-col items-center px-3 mx-auto">
                 <article className="flex flex-col shadow my-4">
                     <a href="#" className="hover:opacity-75">
-                        <img
-                            src="https://source.unsplash.com/collection/1346951/1000x500?sig=1"
-                            width={1000}
-                            height={500}
-                        />
+                        <img src={"http://127.0.0.1:8000" + fundraiserDetails?.photos} width={1000} height={500} />
                     </a>
                     <div className="bg-white flex flex-col justify-start p-6">
                         <p href="#" className="text-blue-700 text-sm font-bold uppercase pb-4">
@@ -242,11 +260,15 @@ export function FundraiserDetail() {
                     <form id="razorpay"></form>
                 </article>
 
-                <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
+                {/* <hr className="h-px mt-4 bg-gray-200 border-0 dark:bg-gray-700" /> */}
+
+                {isAuthenticated() && (
+                    <CommentBox comment={userComment} updateComment={setUserComment} onSubmit={onCommentSubmit} />
+                )}
 
                 {/* Comments */}
                 {fundraiserDetails.comments.length > 0 && (
-                    <div>
+                    <div className="w-full p-6">
                         <h2 className="font-bold text-2xl m-2">Comments ({fundraiserDetails.comments.length})</h2>
 
                         {fundraiserDetails.comments.map((comment, id) => {

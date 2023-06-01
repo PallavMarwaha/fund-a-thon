@@ -248,7 +248,7 @@ function UserFundraiserEdit() {
                         })}
                     </div>
 
-                    <div className="my-4">
+                    {/* <div className="my-4">
                         <label htmlFor="photos" className="text-xs bg-gray-600 p-1 text-white font-medium mr-4">
                             Other photos
                         </label>
@@ -268,7 +268,7 @@ function UserFundraiserEdit() {
                                 </span>
                             );
                         })}
-                    </div>
+                    </div> */}
                 </div>
 
                 <hr className="my-4" />

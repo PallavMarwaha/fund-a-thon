@@ -76,8 +76,12 @@ class Fundraiser(models.Model):
         self.old_name = self.name
 
     def save(self, *args, **kwargs):
-        if self.old_name and not (self.old_name == self.name):
-            self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        # if self.old_name and not (self.old_name == self.name):
+        #     self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        # else:
+        #     self.slug = slugify(f"{self.name} {secrets.token_hex(10)}")
+        if self._state.adding or self.name != self.old_name:
+            self.slug = slugify(f"{self.name} {secrets.token_hex(5)}")
         super(Fundraiser, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -128,7 +132,7 @@ class FundraiserComment(models.Model):
     fundraiser = models.ForeignKey(Fundraiser, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(help_text="User's comment on the fundraiser")
-    commented_at = models.DateTimeField()
+    # commented_at = models.DateTimeField()
     is_deleted = models.BooleanField(default=False, help_text="Used for soft delete")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)

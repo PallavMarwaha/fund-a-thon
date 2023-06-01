@@ -1,14 +1,10 @@
 import { Link } from "react-router-dom";
 import { routes } from "../routes";
 
-function FundraiserGridCard({ name, about, details, slug, created_at }) {
+function FundraiserGridCard({ name, about, details, photos, slug, created_at }) {
     return (
         <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg h-fit">
-            <img
-                alt="Office"
-                src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-                className="h-56 w-full object-cover"
-            />
+            <img alt="Office" src={"http://127.0.0.1:8000" + photos} className="h-56 w-full object-cover" />
 
             <div className="bg-white p-4 sm:p-6">
                 <time dateTime="2022-10-10" className="block text-xs text-gray-500">
