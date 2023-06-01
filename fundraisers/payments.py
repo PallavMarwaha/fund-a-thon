@@ -13,7 +13,7 @@ client = razorpay.Client(auth=(os.getenv("RAZORPAY_KEY"), os.getenv("RAZORPAY_SE
 
 """
 THIS IS NOT MEANT TO BE USED IN ANY PRODUCTION CODEBASE.
-IT IS ONLY MEANT FOR DEMONSTRATION PURPOSES DURING DEVELOPMENT.
+IT IS ONLY MEANT FOR DEMONSTRATION PURPOSES DURING DEVELOPMENT FOR COLLEGE PROJECT.
 """
 
 
@@ -69,6 +69,7 @@ def callback_success(request):
     return Response()
 
 
+# TODO: Try webhook for capturing payments.
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def webhook(request):
