@@ -108,7 +108,7 @@ export function SignUp() {
                 position: toast.POSITION.TOP_RIGHT,
             });
 
-            navigate("/login");
+            navigate("/");
         } catch (error) {
             if (error.response.status === 422) {
                 const { data } = error.response;

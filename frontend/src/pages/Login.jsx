@@ -112,6 +112,8 @@ export function Login() {
                                             id="remember"
                                             aria-describedby="remember"
                                             type="checkbox"
+                                            checked
+                                            disabled
                                             className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
                                             required=""
                                         />
@@ -122,11 +124,11 @@ export function Login() {
                                         </label>
                                     </div>
                                 </div>
-                                <a
+                                {/* <a
                                     href="#"
                                     className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
                                     Forgot password?
-                                </a>
+                                </a> */}
                             </div>
                             <button
                                 type="submit"
@@ -136,7 +138,7 @@ export function Login() {
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Don't have an account yet?
                                 <Link
-                                    to="/signup"
+                                    to="/account/signup"
                                     className="ml-1 font-medium text-primary-600 hover:underline dark:text-primary-500">
                                     Sign up
                                 </Link>

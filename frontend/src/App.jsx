@@ -29,8 +29,8 @@ import UserFundraiserEdit from "./pages/UserFundraiserEdit";
 
 axios.defaults.baseURL = `http://localhost:8000`;
 // For Token authentication
-axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
-axios.defaults.headers.get["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
+// axios.defaults.headers.post["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
+// axios.defaults.headers.get["Authorization"] = `${Cookies.get("_auth_type")} ${Cookies.get("_auth")}`;
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 

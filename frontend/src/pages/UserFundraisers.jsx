@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import useDebounce from "../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
-
+import { Link } from "react-router-dom";
 const toggleViewOptions = [
     {
         value: "table",
@@ -169,6 +169,11 @@ export default function UserFundraisers({ fetcher }) {
                     </div>
                 </form>
             </div>
+            <Link
+                to="/fundraisers/create"
+                className="ml-1 p-4 font-medium text-primary-600 hover:underline dark:text-primary-500">
+                + Create new
+            </Link>
 
             {currentView.value === "table" ? (
                 <UserFundraisersTable data={fundraisersList} onFundraiserDelete={onFundraiserDelete} />

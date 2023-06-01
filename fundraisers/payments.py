@@ -18,6 +18,7 @@ IT IS ONLY MEANT FOR DEMONSTRATION PURPOSES DURING DEVELOPMENT.
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def create_order(request):
     """
     *UNSAFE* FOR TESTING PURPOSE ONLY
